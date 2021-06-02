@@ -9,7 +9,9 @@ meson-private
 meson-uninstalled
 
 # meson subprojects
-subprojects/lyra
+app/subprojects/imgui-1.81
+app/subprojects/packagecache
+app/*.ini
 
 # ninja
 .ninja_deps
