@@ -16,7 +16,7 @@ namespace exaocbot {
 	}
 
 	void create_ui(exaocbot_state& state) noexcept {
-		std::vector<std::array<char, 24>> v4l2_combo_strings{};
+		std::vector<std::array<char, 64>> v4l2_combo_strings{};
 		char* v4l2_current_combo_item = nullptr;
 		using v4l2_combo_string_t = decltype(v4l2_combo_strings)::value_type;
 
@@ -115,7 +115,7 @@ namespace exaocbot {
 					} else {
 						for (const auto& device : state.v4l2_devices) {
 							auto& arr = v4l2_combo_strings.emplace_back();
-							std::memcpy(arr.data(), device->name.data(), device->name.size());
+							std::memcpy(arr.data(), device->name.data(), std::min(device->name.size(), v4l2_combo_string_t().size()));
 						}
 					}
 
