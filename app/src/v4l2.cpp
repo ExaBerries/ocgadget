@@ -95,7 +95,6 @@ namespace exaocbot {
 			devices_found[device.get()] = false;
 		}
 
-		std::scoped_lock devices_lock{devices_mutex};
 		for (const auto& entry : std::filesystem::directory_iterator("/dev")) {
 			if (entry.path().string().rfind("/dev/video", 0) == 0) {
 
@@ -151,12 +150,13 @@ namespace exaocbot {
 			}
 		}
 
-		std::scoped_lock v4l2_config_lock{v4l2_config_mutex};
+		std::scoped_lock devices_lock{devices_mutex};
 		devices_t devices_new{};
 		for (auto& device : devices) {
 			if (devices_found[device.get()]) {
 				devices_new.emplace_back(device);
 			} else if (device.get() == v4l2_config.current_v4l2_device.get()) {
+				std::scoped_lock v4l2_config_lock{v4l2_config_mutex};
 				v4l2_config.current_v4l2_device = {};
 				v4l2_config.dirty = true;
 				std::cout << "lost device " << device->path << " " << device->name << std::endl;
