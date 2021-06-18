@@ -38,7 +38,7 @@ namespace exaocbot {
 		close(fd);
 	}
 
-	void v4l2_playback::load_texture_data(rgb_image& image) noexcept {
+	void v4l2_playback::load_texture_data(image_buffer_t& image) noexcept {
 		struct timeval tv;
 		tv.tv_sec = 2;
 		tv.tv_usec = 0;
@@ -61,7 +61,7 @@ namespace exaocbot {
 			std::cerr << "error queueing " << deocde_ioctl_error() << std::endl;
 		}
 
-		convert_yuyv_to_rgb(buffer_start, image);
+		std::memcpy(image.buffer.data(), buffer_start, bufferinfo.length);
 	}
 
 	void v4l2_playback::start_streaming() noexcept {
@@ -180,6 +180,8 @@ namespace exaocbot {
 		format.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
 		format.fmt.pix.width = width;
 		format.fmt.pix.height = height;
+
+		playback.image_format = image_buffer_t::YUYV_422;
 
 		if (ioctl(playback.fd->fd, VIDIOC_S_FMT, &format) < 0) {
 			std::cerr << "could not set v4l2 playback format" << std::endl;

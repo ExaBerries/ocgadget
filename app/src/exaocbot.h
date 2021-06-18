@@ -15,7 +15,7 @@ namespace exaocbot {
 			BUFFER_WRITTEN
 		} image_buffer_state = WAITING_NEW;
 		std::mutex image_buffer_mutex{};
-		rgb_image image_buffer{1920, 1080};
+		std::optional<image_buffer_t> image_buffer{};
 		std::mutex v4l2_devices_mutex{};
 		std::vector<std::shared_ptr<v4l2_device>> v4l2_devices{};
 		std::mutex v4l2_config_mutex{};

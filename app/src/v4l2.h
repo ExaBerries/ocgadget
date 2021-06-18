@@ -28,11 +28,12 @@ namespace exaocbot {
 		std::shared_ptr<v4l2_file_descriptor> fd{};
 		uint8_t* buffer_start = nullptr;
 		v4l2_buffer bufferinfo;
+		image_buffer_t::image_format_t image_format = image_buffer_t::RGB;
 		uint32_t width = 0;
 		uint32_t height = 0;
 		bool capturing = false;
 
-		void load_texture_data(rgb_image& image) noexcept;
+		void load_texture_data(image_buffer_t& image) noexcept;
 		void start_streaming() noexcept;
 		void stop_streaming() noexcept;
 	};
@@ -40,6 +41,7 @@ namespace exaocbot {
 	struct v4l2_config_t {
 		bool dirty = false;
 		std::shared_ptr<v4l2_device> current_v4l2_device{};
+		image_buffer_t::image_format_t image_format = image_buffer_t::RGB;
 		uint32_t width = 1920;
 		uint32_t height = 1080;
 		uint32_t frame_rate = 60;

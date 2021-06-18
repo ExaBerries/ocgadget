@@ -28,8 +28,16 @@ int main(int argc, char* argv[]) {
 				}
 
 				if (state.v4l2_config.current_v4l2_device != nullptr) {
-					std::cout << "created playback" << std::endl;
 					state.playback = create_v4l2_playback(state.v4l2_config.current_v4l2_device, state.v4l2_config.width, state.v4l2_config.height);
+					state.v4l2_config.image_format = state.playback->image_format;
+					{
+						std::scoped_lock img_bfr_lock{state.image_buffer_mutex};
+						if (state.image_buffer != std::nullopt) {
+							state.image_buffer = {};
+						}
+						state.image_buffer = {state.v4l2_config.image_format, state.v4l2_config.width, state.v4l2_config.height};
+					}
+					std::cout << "created playback" << std::endl;
 					state.playback->start_streaming();
 				} else {
 					state.playback = {};
@@ -39,12 +47,15 @@ int main(int argc, char* argv[]) {
 				state.v4l2_config.dirty = false;
 			}
 
-			if (state.playback != std::nullopt) {
-				if (state.image_buffer_state != image_buffer_state_t::WAITING_NEW) continue;
+			if (state.playback != std::nullopt && state.image_buffer != std::nullopt) {
+				if (state.image_buffer_state != image_buffer_state_t::WAITING_NEW) {
+					//usleep(200);
+					continue;
+				}
 				std::scoped_lock lock{state.image_buffer_mutex};
-				state.playback->load_texture_data(state.image_buffer);
+				state.playback->load_texture_data(*state.image_buffer);
 				state.image_buffer_state = image_buffer_state_t::BUFFER_WRITTEN;
-				usleep(16129);
+				usleep(12000);
 			} else {
 				usleep(64000);
 			}

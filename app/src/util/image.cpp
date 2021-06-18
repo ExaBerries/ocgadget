@@ -2,24 +2,34 @@
 #include <png++/png.hpp>
 
 namespace exaocbot {
-	rgb_image::rgb_image(uint32_t width, uint32_t height) noexcept : buffer(width * height * 3), width(width), height(height) {
+	image_buffer_t::image_buffer_t(image_buffer_t::image_format_t format, uint32_t width, uint32_t height) noexcept : width(width), height(height) {
+		switch (format) {
+			case image_buffer_t::RGB:
+				buffer.resize(width * height * 3u);
+				break;
+			case image_buffer_t::YUYV_422:
+				buffer.resize(width * height * 3u);
+				break;
+		}
 	}
 
-	void convert_yuyv_to_rgb(const uint8_t* yuyv, rgb_image& dest) noexcept {
-		auto* rgb = dest.buffer.data();
-		auto& width = dest.width;
-		auto& height = dest.height;
+	void convert_yuyv_422_to_rgb(const image_buffer_t& image, uint8_t* output) noexcept {
+		auto* yuyv = image.buffer.data();
+		auto* rgb = output;
+		auto& width = image.width;
+		auto& height = image.height;
 
-		int y;
-		int cr;
-		int cb;
+		int32_t y;
+		int32_t cr;
+		int32_t cb;
 
 		double r;
 		double g;
 		double b;
 
-		int i = 0, j = 0;
-		while (i < width * height * 3) {
+		uint32_t i = 0;
+		uint32_t j = 0;
+		while (i < width * height * 3u) {
 			y = yuyv[j];
 			cb = yuyv[j+1];
 			cr = yuyv[j+3];
@@ -63,15 +73,25 @@ namespace exaocbot {
 		}
 	}
 
-	void save_png(const rgb_image& rgb, const std::filesystem::path& path) noexcept {
-		png::image<png::rgb_pixel> image(rgb.width, rgb.height);
-		for (int x = 0; x < rgb.width; x++) {
-			for (int y = 0; y < rgb.height; y++) {
-				image[y][x].red = rgb.buffer.data()[x * 3 + y * rgb.width * 3 + 0];
-				image[y][x].green = rgb.buffer.data()[x * 3 + y * rgb.width * 3 + 1];
-				image[y][x].blue = rgb.buffer.data()[x * 3 + y * rgb.width * 3 + 2];
+	void save_png(const image_buffer_t& image, const std::filesystem::path& path) noexcept {
+		auto save_png_image = [&path](const image_buffer_t& rgb) noexcept -> void {
+			png::image<png::rgb_pixel> png_image(rgb.width, rgb.height);
+			for (uint64_t x = 0; x < rgb.width; x++) {
+				for (uint64_t y = 0; y < rgb.height; y++) {
+					png_image[y][x].red = rgb.buffer.data()[x * 3 + y * rgb.width * 3 + 0];
+					png_image[y][x].green = rgb.buffer.data()[x * 3 + y * rgb.width * 3 + 1];
+					png_image[y][x].blue = rgb.buffer.data()[x * 3 + y * rgb.width * 3 + 2];
+				}
 			}
+			png_image.write(path.c_str());
+		};
+
+		if (image.format == image_buffer_t::RGB) {
+			save_png_image(image);
+		} else if (image.format == image_buffer_t::YUYV_422) {
+			image_buffer_t rgb{image_buffer_t::RGB, image.width, image.height};
+			convert_yuyv_422_to_rgb(image, rgb.buffer.data());
+			save_png_image(rgb);
 		}
-		image.write(path.c_str());
 	}
 } // namespace exaocbot

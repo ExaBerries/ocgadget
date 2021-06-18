@@ -4,15 +4,21 @@
 #include <filesystem>
 
 namespace exaocbot {
-	struct rgb_image {
+	struct image_buffer_t {
+		enum {
+			RGB,
+			YUYV_422
+		} format = RGB;
 		std::vector<uint8_t> buffer{};
 		uint32_t width = 0;
 		uint32_t height = 0;
 
-		rgb_image(uint32_t width, uint32_t height) noexcept;
-		~rgb_image() noexcept = default;
+		using image_format_t = decltype(format);
+
+		image_buffer_t(image_format_t format, uint32_t width, uint32_t height) noexcept;
+		~image_buffer_t() noexcept = default;
 	};
 
-	void convert_yuyv_to_rgb(const uint8_t* yuyv, rgb_image& dest) noexcept;
-	void save_png(const rgb_image& rgb, const std::filesystem::path& path) noexcept;
+	void convert_yuyv_422_to_rgb(const image_buffer_t& image, uint8_t* output) noexcept;
+	void save_png(const image_buffer_t& image, const std::filesystem::path& path) noexcept;
 } // namespace exaocbot
