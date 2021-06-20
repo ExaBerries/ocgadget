@@ -2,13 +2,13 @@
 #include <png++/png.hpp>
 
 namespace exaocbot {
-	image_buffer_t::image_buffer_t(image_buffer_t::image_format_t format, uint32_t width, uint32_t height) noexcept : width(width), height(height) {
+	image_buffer_t::image_buffer_t(image_buffer_t::image_format_t format, uint32_t width, uint32_t height) noexcept : format(format), width(width), height(height) {
 		switch (format) {
 			case image_buffer_t::RGB:
 				buffer.resize(width * height * 3u);
 				break;
 			case image_buffer_t::YUYV_422:
-				buffer.resize(width * height * 3u);
+				buffer.resize(width * height * 2u);
 				break;
 		}
 	}
@@ -29,6 +29,7 @@ namespace exaocbot {
 
 		uint32_t i = 0;
 		uint32_t j = 0;
+
 		while (i < width * height * 3u) {
 			y = yuyv[j];
 			cb = yuyv[j+1];
