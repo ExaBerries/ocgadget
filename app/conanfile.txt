@@ -2,7 +2,7 @@
 exaocbot_msgprotocol/[>=0.1.0]
 glfw/[>=3.3.4]
 glew/[>=2.2.0]
-libpng/[>=1.6.37]
+pngpp/[>=0.2.1]
 
 [generators]
 pkg_config

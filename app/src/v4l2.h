@@ -1,4 +1,5 @@
 #pragma once
+#ifdef __linux__
 #include "util/image.h"
 #include <cstdint>
 #include <memory>
@@ -50,3 +51,4 @@ namespace exaocbot {
 	void find_v4l2_devices(std::vector<std::shared_ptr<v4l2_device>>& devices, std::mutex& devices_mutex, v4l2_config_t& v4l2_config, std::mutex& v4l2_config_mutex) noexcept;
 	[[nodiscard]] v4l2_playback create_v4l2_playback(std::shared_ptr<v4l2_device> device, uint32_t width, uint32_t height) noexcept;
 } // namespace exaocbot
+#endif

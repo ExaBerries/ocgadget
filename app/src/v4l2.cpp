@@ -1,4 +1,5 @@
 #include "v4l2.h"
+#ifdef __linux__
 #include "util/image.h"
 #include <iostream>
 #include <cstring>
@@ -220,3 +221,4 @@ namespace exaocbot {
 		return playback;
 	}
 } // namespace exaocbot
+#endif
