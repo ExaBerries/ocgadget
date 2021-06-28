@@ -1,6 +1,8 @@
 #pragma once
 #include "util/image.h"
 #include "v4l2.h"
+#include "input.h"
+#include "exaocbot_usb.h"
 #include <typeinfo>
 #include <utility>
 #include <mutex>
@@ -24,6 +26,9 @@ namespace exaocbot {
 		std::array<char, 16> part_name_str{};
 		std::array<char, 16> benchmark_name_short_str{};
 		std::array<char, 16> benchmark_score_str{};
+		std::mutex input_events_mutex{};
+		std::vector<input_event> input_events{};
+		exaocbot_usb usb{};
 	};
 
 	using image_buffer_state_t = decltype(std::declval<exaocbot_state>().image_buffer_state);

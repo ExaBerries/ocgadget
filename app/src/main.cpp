@@ -63,6 +63,12 @@ int main(int argc, char* argv[]) {
 		}
 	});
 
+	std::thread controller_thread([&]() noexcept -> void {
+		while (running) {
+
+		}
+	});
+
 	create_ui(state);
 
 	running = false;

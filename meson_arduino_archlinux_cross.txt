@@ -1,0 +1,96 @@
+[constants]
+arduino_hidden_path = '/home/exaberries/.arduino15'
+arduino_usr_path = '/home/exaberries/Arduino'
+
+[binaries]
+c = '/usr/bin/avr-gcc'
+cpp = '/usr/bin/avr-g++'
+ar = '/usr/bin/avr-gcc-ar'
+strip = '/usr/bin/avr-strip'
+pkgconfig = '/usr/bin/pkg-config'
+
+[properties]
+ardu_src = [
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/wiring_pulse.S',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/WInterrupts.c',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/hooks.c',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/wiring.c',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/wiring_analog.c',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/wiring_digital.c',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/wiring_pulse.c',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/wiring_shift.c',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/CDC.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/HardwareSerial.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/HardwareSerial0.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/HardwareSerial1.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/HardwareSerial2.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/HardwareSerial3.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/IPAddress.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/PluggableUSB.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/Print.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/Stream.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/Tone.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/USBCore.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/WMath.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/WString.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/abi.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/main.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino/new.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/libraries/HID/src/HID.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/libraries/SPI/src/SPI.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/libraries/SoftwareSerial/src/SoftwareSerial.cpp',
+  '/usr/share/arduino/hardware/archlinux-arduino/avr/libraries/Wire/src/Wire.cpp',
+  arduino_usr_path + '/libraries/Keyboard/src/Keyboard.cpp',
+  arduino_usr_path + '/libraries/Mouse/src/Mouse.cpp']
+
+[built-in options]
+c_args = [
+  '-I/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino',
+  '-I/usr/share/arduino/hardware/archlinux-arduino/avr/libraries/SoftwareSerial/src',
+  '-I/usr/share/arduino/hardware/archlinux-arduino/avr/libraries/HID/src',
+  '-I' + arduino_hidden_path + '/packages/SparkFun/hardware/avr/1.1.13/variants/promicro',
+  '-I' + arduino_usr_path + '/libraries/Keyboard/src',
+  '-I' + arduino_usr_path + '/libraries/Mouse/src',
+  '-ffunction-sections',
+  '-fdata-sections',
+  '-mmcu=atmega32u4',
+  '-DF_CPU=16000000L',
+  '-DUSB_VID=0x1b4f',
+  '-DUSB_PID=0x9206',
+  '-DARDUINO=10815',
+  '-DARDUINO_AVR_PROMICRO',
+  '-DARDUINO_ARCH_AVR',
+  '-DUSB_PRODUCT="SparkFun Pro Micro"',
+  '-D__PROG_TYPES_COMPAT__']
+
+cpp_args = [
+  '-I/usr/share/arduino/hardware/archlinux-arduino/avr/cores/arduino',
+  '-I/usr/share/arduino/hardware/archlinux-arduino/avr/libraries/SoftwareSerial/src',
+  '-I/usr/share/arduino/hardware/archlinux-arduino/avr/libraries/HID/src',
+  '-I' + arduino_hidden_path + '/packages/SparkFun/hardware/avr/1.1.13/variants/promicro',
+  '-I' + arduino_usr_path + '/libraries/Keyboard/src',
+  '-I' + arduino_usr_path + '/libraries/Mouse/src',
+  '-fno-exceptions',
+  '-ffunction-sections',
+  '-fdata-sections',
+  '-fno-threadsafe-statics',
+  '-mmcu=atmega32u4',
+  '-DF_CPU=16000000L',
+  '-DUSB_VID=0x1b4f',
+  '-DUSB_PID=0x9206',
+  '-DARDUINO=10815',
+  '-DARDUINO_AVR_PROMICRO',
+  '-DARDUINO_ARCH_AVR',
+  '-DUSB_PRODUCT="SparkFun Pro Micro"',
+  '-D__PROG_TYPES_COMPAT__',
+  '-Wno-non-virtual-dtor',
+  '-Wno-volatile']
+
+c_link_args = ['-Wl,--gc-sections', '-mmcu=atmega328p']
+cpp_link_args = ['-Wl,--gc-sections', '-mmcu=atmega328p']
+
+[host_machine]
+system = 'baremetal'
+cpu_family = 'avr'
+cpu = 'atmega328P'
+endian = 'none'

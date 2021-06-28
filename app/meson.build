@@ -1,5 +1,5 @@
 project(
-	'exaocbot',
+	'exaocbot_app_linux',
 	'cpp',
 	default_options: [
 		'cpp_std=c++20'
@@ -18,11 +18,12 @@ exe = executable(
 		'src/util/image.cpp'
 	],
 	dependencies: [
+		dependency('exaocbot_msgprotocol'),
 		imgui_dep,
 		dependency('glfw3'),
-		dependency('gl'),
 		dependency('glew'),
-		dependency('threads'),
-		dependency('libpng')
+		dependency('gl'),
+		dependency('libpng'),
+		dependency('threads')
 	]
 )

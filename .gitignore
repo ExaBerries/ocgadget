@@ -13,6 +13,13 @@ app/subprojects/imgui-1.81
 app/subprojects/packagecache
 app/*.ini
 
+# conan
+conanbuildinfo.txt
+conaninfo.txt
+conan.lock
+graph_info.json
+*.pc
+
 # ninja
 .ninja_deps
 .ninja_log
