@@ -305,9 +305,6 @@ namespace exaocbot {
 		glfwSetCursorPosCallback(ui_state.window, cursor_position_callback);
 		glfwSetMouseButtonCallback(ui_state.window, mouse_button_callback);
 		glfwSetScrollCallback(ui_state.window, scroll_callback);
-
-		glfwMakeContextCurrent(ui_state.window);
-		glfwSwapInterval(1);
 	}
 
 	static void init_imgui(ui_state_t& ui_state) noexcept {
@@ -414,8 +411,10 @@ namespace exaocbot {
 		ui_state_t ui_state;
 		ui_state.eob_state = &state;
 
-		auto result = init_renderer<render_api::OPENGL>(&ui_state);
+		auto result = init_renderer<render_api::METAL>(&ui_state);
 		if (result != std::nullopt) {
+			ui_state.renderer = std::move(result.value());
+		} else if (result = init_renderer<render_api::OPENGL>(&ui_state); result != std::nullopt) {
 			ui_state.renderer = std::move(result.value());
 		} else {
 			std::cout << "could not initialize renderer" << std::endl;
@@ -460,7 +459,6 @@ namespace exaocbot {
 			ui_state.renderer->loop_pre_imgui();
 			loop_imgui(ui_state);
 			ui_state.renderer->loop();
-			glfwSwapBuffers(ui_state.window);
 		}
 
 		ui_state.renderer->cleanup();

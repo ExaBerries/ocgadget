@@ -282,6 +282,9 @@ void main() {
 		}
 
 		virtual void glfw_window_created() noexcept override {
+			glfwMakeContextCurrent(ui_state->window);
+			glfwSwapInterval(1);
+
 			glewExperimental = true;
 			if (glewInit() != GLEW_OK) {
 				std::cerr << "could not initalize glew" << std::endl;
@@ -389,6 +392,7 @@ void main() {
 			}
 
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			glfwSwapBuffers(ui_state->window);
 		}
 
 		virtual void cleanup() noexcept override {

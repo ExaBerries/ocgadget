@@ -11,7 +11,10 @@ message(host_machine.system())
 
 if host_machine.system() == 'darwin'
 	add_languages(['objc','objcpp'])
-	add_global_arguments('-std=c++2a', language: 'objcpp')
+	add_global_arguments([
+		'-std=c++2a',
+		'-fobjc-arc'
+	], language: 'objcpp')
 endif
 
 imgui = subproject('imgui')
@@ -29,7 +32,9 @@ deps = [
 
 if host_machine.system() == 'darwin'
 	deps += [
-		dependency('Metal')
+		dependency('Metal'),
+		dependency('MetalKit'),
+		dependency('QuartzCore')
 	]
 endif
 
