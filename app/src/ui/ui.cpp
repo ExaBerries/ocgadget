@@ -12,6 +12,13 @@
 #include <chrono>
 
 namespace exaocbot {
+	#ifndef __APPLE__
+		template <>
+		[[nodiscard]] std::optional<std::unique_ptr<renderer_t>> init_renderer<render_api::METAL>(ui_state_t* state) noexcept {
+			return {};
+		}
+	#endif
+
 	static void glfw_error_callback(int error, const char* description) noexcept {
 		std::cerr << "glfw error: " << error << '\t' << description << std::endl;
 	}
@@ -447,7 +454,7 @@ namespace exaocbot {
 				ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 			}
 
-			if (ui_state.eob_state->capture_state.playback != std::nullopt && (ui_state.image_buffer_converter == nullptr || ui_state.image_buffer_converter->input_format() != ui_state.eob_state->capture_state.playback->image_format)) {
+			if (ui_state.eob_state->capture_state.playback != nullptr && (ui_state.image_buffer_converter == nullptr || ui_state.image_buffer_converter->input_format() != ui_state.eob_state->capture_state.playback->image_format)) {
 				if (ui_state.image_buffer_converter != nullptr) {
 					ui_state.image_buffer_converter->cleanup();
 					ui_state.image_buffer_converter.reset();

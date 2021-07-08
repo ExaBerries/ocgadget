@@ -1,7 +1,6 @@
 #pragma once
 #include "util/image.h"
 #include "capture/capture.h"
-#include "v4l2.h"
 #include "input.h"
 #include "exaocbot_usb.h"
 #include <typeinfo>

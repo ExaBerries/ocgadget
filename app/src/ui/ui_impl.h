@@ -18,8 +18,8 @@ namespace exaocbot {
 		[[nodiscard]] virtual image_buffer_t::image_format_t input_format() noexcept = 0;
 	};
 
-	struct renderer {
-		virtual ~renderer() noexcept = default;
+	struct renderer_t {
+		virtual ~renderer_t() noexcept = default;
 
 		virtual void init_glfw_hints() noexcept = 0;
 		virtual void glfw_window_created() noexcept = 0;
@@ -33,7 +33,7 @@ namespace exaocbot {
 	struct ui_state_t {
 		exaocbot_state* eob_state = nullptr;
 		GLFWwindow* window = nullptr;
-		std::unique_ptr<renderer> renderer{};
+		std::unique_ptr<renderer_t> renderer{};
 		std::vector<std::array<char, 64>> capture_combo_strings{};
 		char* capture_current_combo_item = nullptr;
 		std::unique_ptr<image_buffer_converter_t> image_buffer_converter{};
@@ -43,5 +43,5 @@ namespace exaocbot {
 	};
 
 	template <render_api api>
-	[[nodiscard]] std::optional<std::unique_ptr<renderer>> init_renderer(ui_state_t* state) noexcept;
+	[[nodiscard]] std::optional<std::unique_ptr<renderer_t>> init_renderer(ui_state_t* state) noexcept;
 } // namespace exaocbot

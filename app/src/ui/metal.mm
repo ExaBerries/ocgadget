@@ -20,7 +20,7 @@ namespace exaocbot {
 		id<MTLRenderCommandEncoder> encoder;
 	};
 
-	struct metal_renderer : public renderer {
+	struct metal_renderer : public renderer_t {
 		ui_state_t* ui_state = nullptr;
 		mtl_image_converter_data data{};
 		id<CAMetalDrawable> current_drawable;
@@ -98,7 +98,7 @@ namespace exaocbot {
 	};
 
 	template <>
-	[[nodiscard]] std::optional<std::unique_ptr<renderer>> init_renderer<render_api::METAL>(ui_state_t* state) noexcept {
+	[[nodiscard]] std::optional<std::unique_ptr<renderer_t>> init_renderer<render_api::METAL>(ui_state_t* state) noexcept {
 		return std::make_unique<metal_renderer>(state);
 	}
 } // namespace exaocbot

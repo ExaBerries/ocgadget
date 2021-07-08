@@ -40,7 +40,6 @@ endif
 
 srcs = [
 	'src/main.cpp',
-	'src/v4l2.cpp',
 	'src/ui/ui.cpp',
 	'src/ui/gl.cpp',
 	'src/capture/capture.cpp',
@@ -50,6 +49,10 @@ srcs = [
 if host_machine.system() == 'darwin'
 	srcs += [
 		'src/ui/metal.mm'
+	]
+elif host_machine.system() == 'linux'
+	srcs += [
+		'src/capture/v4l2.cpp'
 	]
 endif
 

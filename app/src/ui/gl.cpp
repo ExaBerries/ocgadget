@@ -6,7 +6,7 @@
 #elif defined(__linux__)
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include <Gl/glext.h>
+#include <GL/glext.h>
 #endif
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 #include <imgui.h>
@@ -258,7 +258,7 @@ void main() {
 		std::cout << std::endl;
 	}*/
 
-	struct opengl_renderer : public renderer {
+	struct opengl_renderer : public renderer_t {
 		ui_state_t* ui_state = nullptr;
 		gl_image_converter_data data{};
 		GLint gl_major = 0;
@@ -416,7 +416,7 @@ void main() {
 	};
 
 	template <>
-	[[nodiscard]] std::optional<std::unique_ptr<renderer>> init_renderer<render_api::OPENGL>(ui_state_t* state) noexcept{
+	[[nodiscard]] std::optional<std::unique_ptr<renderer_t>> init_renderer<render_api::OPENGL>(ui_state_t* state) noexcept {
 		return std::make_unique<opengl_renderer>(state);
 	}
 } // namespace exaocbot

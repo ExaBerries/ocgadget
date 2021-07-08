@@ -20,9 +20,11 @@ int main(int argc, char* argv[]) {
 	bool running = true;
 	
 	std::thread capture_thread([&]() noexcept -> void {
+		capture_init(state.capture_state);
 		while (running) {
 			capture_loop(state.capture_state);
 		}
+		capture_cleanup(state.capture_state);
 	});
 
 	std::thread controller_thread([&]() noexcept -> void {
