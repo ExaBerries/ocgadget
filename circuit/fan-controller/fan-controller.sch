@@ -1,0 +1,172 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title "fan controller"
+Date ""
+Rev "1.0"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Connector:Conn_01x01_Female J2
+U 1 1 60E80866
+P 2050 3350
+F 0 "J2" H 1942 3125 50  0000 C CNN
+F 1 "PWM" H 1942 3216 50  0000 C CNN
+F 2 "" H 2050 3350 50  0001 C CNN
+F 3 "~" H 2050 3350 50  0001 C CNN
+	1    2050 3350
+	-1   0    0    1   
+$EndComp
+$Comp
+L Connector:Conn_01x01_Female J1
+U 1 1 60E80C82
+P 2050 2850
+F 0 "J1" H 1942 2625 50  0000 C CNN
+F 1 "12v" H 1942 2716 50  0000 C CNN
+F 2 "" H 2050 2850 50  0001 C CNN
+F 3 "~" H 2050 2850 50  0001 C CNN
+	1    2050 2850
+	-1   0    0    1   
+$EndComp
+$Comp
+L Connector:Conn_01x01_Female J3
+U 1 1 60E811E2
+P 2050 3700
+F 0 "J3" H 1942 3475 50  0000 C CNN
+F 1 "GND" H 1942 3566 50  0000 C CNN
+F 2 "" H 2050 3700 50  0001 C CNN
+F 3 "~" H 2050 3700 50  0001 C CNN
+	1    2050 3700
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R_US R1
+U 1 1 60E81DDB
+P 2600 3350
+F 0 "R1" V 2395 3350 50  0000 C CNN
+F 1 "10k" V 2486 3350 50  0000 C CNN
+F 2 "" V 2640 3340 50  0001 C CNN
+F 3 "~" H 2600 3350 50  0001 C CNN
+	1    2600 3350
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_US R3
+U 1 1 60E82640
+P 3050 3000
+F 0 "R3" H 2850 3050 50  0000 L CNN
+F 1 "10k" H 2800 2950 50  0000 L CNN
+F 2 "" V 3090 2990 50  0001 C CNN
+F 3 "~" H 3050 3000 50  0001 C CNN
+	1    3050 3000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Q_PMOS_GDS Q2
+U 1 1 60E85E45
+P 3550 3150
+F 0 "Q2" H 3755 3196 50  0000 L CNN
+F 1 "AOI21357" H 3755 3105 50  0000 L CNN
+F 2 "" H 3750 3250 50  0001 C CNN
+F 3 "~" H 3550 3150 50  0001 C CNN
+	1    3550 3150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x03_Male J5
+U 1 1 60E8A3EC
+P 3650 3950
+F 0 "J5" V 3750 4200 50  0000 C CNN
+F 1 "FAN" V 3650 4200 50  0000 C CNN
+F 2 "" H 3650 3950 50  0001 C CNN
+F 3 "~" H 3650 3950 50  0001 C CNN
+	1    3650 3950
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R_US R2
+U 1 1 60E822A1
+P 2750 3550
+F 0 "R2" H 2818 3596 50  0000 L CNN
+F 1 "10k" H 2818 3505 50  0000 L CNN
+F 2 "" V 2790 3540 50  0001 C CNN
+F 3 "~" H 2750 3550 50  0001 C CNN
+	1    2750 3550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2250 3350 2450 3350
+Wire Wire Line
+	2750 3400 2750 3350
+Wire Wire Line
+	2750 3700 2250 3700
+Wire Wire Line
+	3650 2950 3650 2850
+Wire Wire Line
+	3650 2850 3050 2850
+Wire Wire Line
+	3050 2850 2250 2850
+Connection ~ 3050 2850
+Wire Wire Line
+	3650 3750 3650 3350
+$Comp
+L Connector:Conn_01x01_Female J4
+U 1 1 60EC4AE3
+P 2050 3950
+F 0 "J4" H 1950 3750 50  0000 C CNN
+F 1 "tach input" H 1950 3850 50  0000 C CNN
+F 2 "" H 2050 3950 50  0001 C CNN
+F 3 "~" H 2050 3950 50  0001 C CNN
+	1    2050 3950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	3750 3750 3900 3750
+Wire Wire Line
+	3900 3750 3900 4000
+Wire Wire Line
+	3900 4000 2250 4000
+Wire Wire Line
+	2250 4000 2250 3950
+Connection ~ 2750 3350
+$Comp
+L Device:Q_NPN_EBC Q1
+U 1 1 60E87F74
+P 2950 3350
+F 0 "Q1" H 3140 3396 50  0000 L CNN
+F 1 "2N4401" H 3140 3305 50  0000 L CNN
+F 2 "" H 3150 3450 50  0001 C CNN
+F 3 "~" H 2950 3350 50  0001 C CNN
+	1    2950 3350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R4
+U 1 1 60EC6E48
+P 3200 3150
+F 0 "R4" V 3300 3100 50  0000 L CNN
+F 1 "1k" V 3400 3050 50  0000 L CNN
+F 2 "" V 3240 3140 50  0001 C CNN
+F 3 "~" H 3200 3150 50  0001 C CNN
+	1    3200 3150
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	3050 3550 3050 3700
+Wire Wire Line
+	3050 3700 2750 3700
+Connection ~ 2750 3700
+Wire Wire Line
+	3050 3700 3550 3700
+Wire Wire Line
+	3550 3700 3550 3750
+Connection ~ 3050 3700
+Connection ~ 3050 3150
+$EndSCHEMATC
