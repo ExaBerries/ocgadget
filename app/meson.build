@@ -40,6 +40,7 @@ endif
 
 srcs = [
 	'src/main.cpp',
+	'src/exaocbot.cpp',
 	'src/ui/ui.cpp',
 	'src/ui/gl.cpp',
 	'src/capture/capture.cpp',
@@ -52,6 +53,7 @@ if host_machine.system() == 'darwin'
 	]
 elif host_machine.system() == 'linux'
 	srcs += [
+		'src/exaocbot-linux.cpp',
 		'src/capture/v4l2.cpp'
 	]
 endif

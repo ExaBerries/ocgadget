@@ -405,8 +405,10 @@ void main() {
 				return std::make_unique<gl_rgb_passthrough_buffer_converter>(&data);
 			} else if (format == image_buffer_t::YUYV_422) {
 				if (gl_major >= 4 && gl_minor >= 3) {
+					std::cout << "using compute yuyv 422 decoder" << std::endl;
 					return std::make_unique<gl_gpu_compute_yuyv_422_buffer_converter>(&data);
 				} else {
+					std::cout << "using cpu yuyv 422 decoder" << std::endl;
 					return std::make_unique<gl_cpu_yuyv_422_buffer_converter>(&data);
 				}
 			}

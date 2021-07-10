@@ -28,9 +28,9 @@ int main(int argc, char* argv[]) {
 	});
 
 	std::thread controller_thread([&]() noexcept -> void {
-		while (running) {
-
-		}
+		//while (running) {
+		//	usleep(8192);
+		//}
 	});
 
 	create_ui(state);

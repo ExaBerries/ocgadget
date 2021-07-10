@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 #include <chrono>
+#include <filesystem>
 
 namespace exaocbot {
 	#ifndef __APPLE__
@@ -378,8 +379,7 @@ namespace exaocbot {
 			ImGui::InputText("##score", ui_state.eob_state->benchmark_score_str.data(), ui_state.eob_state->benchmark_score_str.size());
 
 			if (ImGui::Button("Screenshot") && capture_state.image_buffer != std::nullopt) {
-				std::scoped_lock lock{capture_state.image_buffer_mutex};
-				save_png(*capture_state.image_buffer, "/home/exaberries/Documents/screenshots/exaocbot/" + std::string(ui_state.eob_state->part_name_str.data()) + "-" + std::string(ui_state.eob_state->benchmark_name_short_str.data()) + "-" + std::string(ui_state.eob_state->benchmark_score_str.data()) + ".png");
+				save_screenshot(*ui_state.eob_state);
 			}
 
 			ImGui::Text("Input: ");

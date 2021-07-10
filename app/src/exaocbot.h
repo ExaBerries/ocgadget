@@ -9,6 +9,7 @@
 #include <vector>
 #include <array>
 #include <optional>
+#include <filesystem>
 
 namespace exaocbot {
 	struct exaocbot_state {
@@ -20,4 +21,7 @@ namespace exaocbot {
 		std::vector<input_event> input_events{};
 		exaocbot_usb usb{};
 	};
+
+	[[nodiscard]] std::filesystem::path base_screenshot_folder() noexcept;
+	void save_screenshot(exaocbot_state& state) noexcept;
 } // namespace exaocbot
