@@ -2,21 +2,22 @@
 #include <exaocbot_usb_protocol.h>
 
 constexpr int LED = 17;
-int delay = 10;
 int data = 0;
+int time = 300;
 
 void setup() noexcept {
 	pinMode(LED, OUTPUT);
-	Serial.begin(9600);
+	Serial.begin(115200);
 }
 
 void loop() noexcept {
-	if (Serial.avaliable() > 0) {
+	if (Serial.available() > 0) {
 		data = Serial.read();
-		Serial.print(data, DEC);
+		time = data;
 	}
 	digitalWrite(LED, HIGH);
-	delay(1600);
+	delay(time);
 	digitalWrite(LED, LOW);
-	delay(60);
+	delay(1600);
+	Serial.println("test");
 }

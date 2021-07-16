@@ -1,9 +1,6 @@
 #include "capture.h"
 #include <iostream>
 #include <unistd.h>
-#if defined(__linux__)
-#include "v4l2.h"
-#endif
 
 namespace exaocbot {
 	static void find_capture_devices(capture_state_t& state) noexcept {
@@ -27,9 +24,7 @@ namespace exaocbot {
 	void capture_init(capture_state_t& state) noexcept {
 		state.capture_config.img_config.width = 1920;
 		state.capture_config.img_config.height = 1080;
-		#if defined(__linux__)
-		state.capture_apis.emplace_back(std::make_shared<v4l2>());
-		#endif
+		capture_apis_init(state);
 	}
 
 	void capture_loop(capture_state_t& state) noexcept {

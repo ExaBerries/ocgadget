@@ -398,8 +398,10 @@ namespace exaocbot {
 			ImGui::Begin("exaocbot controller");
 			ImGui::Text("State: ");
 			ImGui::SameLine();
-			if (ui_state.eob_state->usb.state == exaocbot_usb::CONNECTED) {
+			if (ui_state.eob_state->msg_state.connection_state == msg_state_t::CONNECTED) {
 				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "CONNECTED");
+			} else if (ui_state.eob_state->msg_state.connection_state == msg_state_t::CONNECTING) {
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "CONNECTING");
 			} else {
 				ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "DISCONNECTED");
 			}

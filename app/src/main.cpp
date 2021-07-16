@@ -3,7 +3,6 @@
 #include "ui/ui.h"
 #include <thread>
 #include <cstring>
-#include <unistd.h>
 #include <iostream>
 
 namespace exaocbot {
@@ -28,9 +27,11 @@ int main(int argc, char* argv[]) {
 	});
 
 	std::thread controller_thread([&]() noexcept -> void {
-		//while (running) {
-		//	usleep(8192);
-		//}
+		msg_init(state.msg_state);
+		while (running) {
+			msg_loop(state.msg_state);
+		}
+		msg_cleanup(state.msg_state);
 	});
 
 	create_ui(state);

@@ -1,8 +1,8 @@
 #pragma once
 #include "util/image.h"
 #include "capture/capture.h"
+#include "msg/msg.h"
 #include "input.h"
-#include "exaocbot_usb.h"
 #include <typeinfo>
 #include <utility>
 #include <mutex>
@@ -19,7 +19,7 @@ namespace exaocbot {
 		std::array<char, 16> benchmark_score_str{};
 		std::mutex input_events_mutex{};
 		std::vector<input_event> input_events{};
-		exaocbot_usb usb{};
+		msg_state_t msg_state{};
 	};
 
 	[[nodiscard]] std::filesystem::path base_screenshot_folder() noexcept;

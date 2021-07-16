@@ -66,6 +66,7 @@ namespace exaocbot {
 	};
 
 	void capture_init(capture_state_t& state) noexcept;
+	void capture_apis_init(capture_state_t& state) noexcept;
 	void capture_loop(capture_state_t& state) noexcept;
 	void capture_cleanup(capture_state_t& state) noexcept;
 } // namespace exaocbot
