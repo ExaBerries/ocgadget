@@ -50,58 +50,54 @@ namespace exaocbot {
 		uint8_t* buffer_start = nullptr;
 		v4l2_buffer bufferinfo{};
 
-		void load_texture_data(image_buffer_t& image) noexcept;
-		void start_streaming() noexcept;
-		void stop_streaming() noexcept;
+		void load_texture_data(image_buffer_t& image) noexcept {
+			struct timeval tv;
+			tv.tv_sec = 2;
+			tv.tv_usec = 0;
+			fd_set fds;
+			FD_ZERO(&fds);
+			FD_SET(fd->fd, &fds);
+			int r = select(fd->fd + 1, &fds, NULL, NULL, &tv);
+			if (r == 0) {
+				capturing = false;
+				return;
+			}
+
+			capturing = true;
+
+			if (ioctl(fd->fd, VIDIOC_DQBUF, &bufferinfo) < 0) {
+				std::cerr << "error dequeueing " << deocde_ioctl_error() << std::endl;
+			}
+
+			if (ioctl(fd->fd, VIDIOC_QBUF, &bufferinfo) < 0) {
+				std::cerr << "error queueing " << deocde_ioctl_error() << std::endl;
+			}
+
+			std::memcpy(image.buffer.data(), buffer_start, bufferinfo.length);
+		}
+		
+		void start_streaming() noexcept {
+			std::memset(&bufferinfo, 0, sizeof(bufferinfo));
+
+			bufferinfo.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+			bufferinfo.memory = V4L2_MEMORY_MMAP;
+			bufferinfo.index = 0;
+
+			if (ioctl(fd->fd, VIDIOC_QBUF, &bufferinfo) < 0) {
+				std::cerr << "error queueing before streaming start " << deocde_ioctl_error() << std::endl;
+				std::exit(EXIT_FAILURE);
+			}
+
+			if (ioctl(fd->fd, VIDIOC_STREAMON, &bufferinfo.type) < 0) {
+				std::cerr << "could not start v4l2 playback streaming" << std::endl;
+				std::exit(EXIT_FAILURE);
+			}
+		}
+		
+		void stop_streaming() noexcept {
+			ioctl(fd->fd, VIDIOC_STREAMOFF, &bufferinfo.type);
+		}
 	};
-
-	void v4l2_playback::load_texture_data(image_buffer_t& image) noexcept {
-		struct timeval tv;
-		tv.tv_sec = 2;
-		tv.tv_usec = 0;
-		fd_set fds;
-		FD_ZERO(&fds);
-		FD_SET(fd->fd, &fds);
-		int r = select(fd->fd + 1, &fds, NULL, NULL, &tv);
-		if (r == 0) {
-			capturing = false;
-			return;
-		}
-
-		capturing = true;
-
-		if (ioctl(fd->fd, VIDIOC_DQBUF, &bufferinfo) < 0) {
-			std::cerr << "error dequeueing " << deocde_ioctl_error() << std::endl;
-		}
-
-		if (ioctl(fd->fd, VIDIOC_QBUF, &bufferinfo) < 0) {
-			std::cerr << "error queueing " << deocde_ioctl_error() << std::endl;
-		}
-
-		std::memcpy(image.buffer.data(), buffer_start, bufferinfo.length);
-	}
-
-	void v4l2_playback::start_streaming() noexcept {
-		std::memset(&bufferinfo, 0, sizeof(bufferinfo));
-
-		bufferinfo.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		bufferinfo.memory = V4L2_MEMORY_MMAP;
-		bufferinfo.index = 0;
-
-		if (ioctl(fd->fd, VIDIOC_QBUF, &bufferinfo) < 0) {
-			std::cerr << "error queueing before streaming start " << deocde_ioctl_error() << std::endl;
-			std::exit(EXIT_FAILURE);
-		}
-
-		if (ioctl(fd->fd, VIDIOC_STREAMON, &bufferinfo.type) < 0) {
-			std::cerr << "could not start v4l2 playback streaming" << std::endl;
-			std::exit(EXIT_FAILURE);
-		}
-	}
-
-	void v4l2_playback::stop_streaming() noexcept {
-		ioctl(fd->fd, VIDIOC_STREAMOFF, &bufferinfo.type);
-	}
 
 	[[nodiscard]] std::unique_ptr<capture_playback> v4l2::create_capture_playback(capture_state_t& state) noexcept {
 		std::unique_ptr<capture_playback> new_playback = std::make_unique<v4l2_playback>();
