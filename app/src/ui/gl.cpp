@@ -62,7 +62,7 @@ namespace exaocbot {
 	struct gl_rgb_passthrough_buffer_converter : public image_buffer_converter_t {
 		gl_image_converter_data* data = nullptr;
 
-		gl_rgb_passthrough_buffer_converter(gl_image_converter_data*data) noexcept : data(data) {
+		gl_rgb_passthrough_buffer_converter(gl_image_converter_data* data) noexcept : data(data) {
 		}
 
 		virtual ~gl_rgb_passthrough_buffer_converter() noexcept = default;
@@ -268,7 +268,7 @@ void main() {
 			data.ui_state = state;
 		}
 
-		virtual void init_glfw_hints() noexcept override {
+		void init_glfw_hints() noexcept override {
 			#if defined(__linux__)
 				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -281,7 +281,7 @@ void main() {
 			//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 		}
 
-		virtual void glfw_window_created() noexcept override {
+		void glfw_window_created() noexcept override {
 			glfwMakeContextCurrent(ui_state->window);
 			glfwSwapInterval(1);
 
@@ -303,7 +303,7 @@ void main() {
 			glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE);*/
 		}
 		
-		virtual void init() noexcept override {
+		void init() noexcept override {
 			ImGui_ImplGlfw_InitForOpenGL(ui_state->window, true);
 			
 			#if defined(__linux__)
@@ -362,12 +362,12 @@ void main() {
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 		}
 
-		virtual void loop_pre_imgui() noexcept override {
+		void loop_pre_imgui() noexcept override {
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 		}
 		
-		virtual void loop() noexcept override {
+		void loop() noexcept override {
 			ImGui::Render();
 			int display_w;
 			int display_h;
@@ -395,12 +395,12 @@ void main() {
 			glfwSwapBuffers(ui_state->window);
 		}
 
-		virtual void cleanup() noexcept override {
+		void cleanup() noexcept override {
 			ImGui_ImplOpenGL3_Shutdown();
 			ImGui_ImplGlfw_Shutdown();
 		}
 
-		[[nodiscard]] virtual std::unique_ptr<image_buffer_converter_t> create_image_buffer_converter(image_buffer_t::image_format_t format) noexcept override {
+		[[nodiscard]] std::unique_ptr<image_buffer_converter_t> create_image_buffer_converter(image_buffer_t::image_format_t format) noexcept override {
 			if (format == image_buffer_t::RGB) {
 				return std::make_unique<gl_rgb_passthrough_buffer_converter>(&data);
 			} else if (format == image_buffer_t::YUYV_422) {

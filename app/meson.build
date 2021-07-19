@@ -3,16 +3,15 @@ project(
 	'cpp',
 	version: '0.1.0',
 	default_options: [
-		'cpp_std=c++20'
+		'cpp_std=c++17'
 	]
 )
 
 message(host_machine.system())
 
 if host_machine.system() == 'darwin'
-	add_languages(['objc','objcpp'])
+	add_languages(['objc', 'objcpp'])
 	add_global_arguments([
-		'-std=c++2a',
 		'-fobjc-arc'
 	], language: 'objcpp')
 endif
@@ -34,7 +33,8 @@ if host_machine.system() == 'darwin'
 	deps += [
 		dependency('Metal'),
 		dependency('MetalKit'),
-		dependency('QuartzCore')
+		dependency('QuartzCore'),
+		dependency('AVFoundation')
 	]
 endif
 
@@ -50,7 +50,11 @@ srcs = [
 
 if host_machine.system() == 'darwin'
 	srcs += [
-		'src/ui/metal.mm'
+		'src/exaocbot_macos.cpp',
+		'src/ui/metal.mm',
+		'src/capture/capture_macos.mm',
+		'src/capture/avfoundation.mm',
+		'src/msg/msg_macos.cpp'
 	]
 elif host_machine.system() == 'linux'
 	srcs += [

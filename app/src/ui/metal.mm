@@ -20,6 +20,28 @@ namespace exaocbot {
 		id<MTLRenderCommandEncoder> encoder;
 	};
 
+	struct metal_rgb_passthrough_buffer_converter : public image_buffer_converter_t {
+		mtl_image_converter_data* data = nullptr;
+		
+		metal_rgb_passthrough_buffer_converter(mtl_image_converter_data* data) noexcept : data(data) {
+		};
+
+		~metal_rgb_passthrough_buffer_converter() noexcept = default;
+
+		void init() noexcept override {
+		}
+
+		void load_texture() noexcept override {
+		}
+
+		void cleanup() noexcept override {
+		}
+
+		[[nodiscard]] image_buffer_t::image_format_t input_format() noexcept override {
+			return image_buffer_t::RGB;
+		}
+	};
+
 	struct metal_renderer : public renderer_t {
 		ui_state_t* ui_state = nullptr;
 		mtl_image_converter_data data{};
@@ -30,14 +52,14 @@ namespace exaocbot {
 			data.ui_state = state;
 		}
 
-		virtual void init_glfw_hints() noexcept {
+		void init_glfw_hints() noexcept {
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		}
 		
-		virtual void glfw_window_created() noexcept {
+		void glfw_window_created() noexcept {
 		}
 		
-		virtual void init() noexcept {
+		void init() noexcept {
 			data.device = MTLCreateSystemDefaultDevice();
 			data.command_queue = [data.device newCommandQueue];
 
@@ -59,7 +81,7 @@ namespace exaocbot {
 			data.main_pass.colorAttachments[0].storeAction = MTLStoreActionStore;
 		}
 		
-		virtual void loop_pre_imgui() noexcept {
+		void loop_pre_imgui() noexcept {
 			int display_w;
 			int display_h;
 			glfwGetFramebufferSize(ui_state->window, &display_w, &display_h);
@@ -74,7 +96,7 @@ namespace exaocbot {
 			ImGui_ImplGlfw_NewFrame();
 		}
 		
-		virtual void loop() noexcept {
+		void loop() noexcept {
 			ImGui::Render();
 			ImDrawData* draw_data = ImGui::GetDrawData();
 			data.encoder = [data.buffer renderCommandEncoderWithDescriptor:data.main_pass];
@@ -86,14 +108,15 @@ namespace exaocbot {
 			[data.buffer commit];
 		}
 		
-		virtual void cleanup() noexcept {
+		void cleanup() noexcept {
 			ImGui_ImplMetal_Shutdown();
 			ImGui_ImplGlfw_Shutdown();
 		}
 		
 		[[nodiscard]] virtual std::unique_ptr<image_buffer_converter_t> create_image_buffer_converter(image_buffer_t::image_format_t format) noexcept {
-			std::cout << "could not create image buffer converter" << std::endl;
-			std::exit(EXIT_FAILURE);
+			return std::make_unique<metal_rgb_passthrough_buffer_converter>(&data);
+			//std::cout << "could not create image buffer converter" << std::endl;
+			//std::exit(EXIT_FAILURE);
 		}
 	};
 
