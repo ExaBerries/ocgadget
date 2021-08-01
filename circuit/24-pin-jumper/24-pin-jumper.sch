@@ -1,0 +1,132 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Connector_Generic:Conn_02x12_Top_Bottom J1
+U 1 1 6100F409
+P 3650 2800
+F 0 "J1" H 3700 3517 50  0000 C CNN
+F 1 "24 pin" H 3700 3426 50  0000 C CNN
+F 2 "" H 3650 2800 50  0001 C CNN
+F 3 "~" H 3650 2800 50  0001 C CNN
+	1    3650 2800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Female J2
+U 1 1 6101B2AB
+P 6100 2600
+F 0 "J2" H 6128 2576 50  0000 L CNN
+F 1 "from controller" H 6128 2485 50  0000 L CNN
+F 2 "" H 6100 2600 50  0001 C CNN
+F 3 "~" H 6100 2600 50  0001 C CNN
+	1    6100 2600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small_US R2
+U 1 1 610279F6
+P 4900 2550
+F 0 "R2" V 4695 2550 50  0000 C CNN
+F 1 "1k" V 4786 2550 50  0000 C CNN
+F 2 "" H 4900 2550 50  0001 C CNN
+F 3 "~" H 4900 2550 50  0001 C CNN
+	1    4900 2550
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4150 2750 4150 2700
+Wire Wire Line
+	4150 2700 3950 2700
+Wire Wire Line
+	5900 2600 5600 2600
+Wire Wire Line
+	5600 2600 5600 2550
+Wire Wire Line
+	5600 2750 5600 2700
+Wire Wire Line
+	5600 2700 5900 2700
+$Comp
+L Switch:SW_SPST SW1
+U 1 1 6102EAE8
+P 4300 2500
+F 0 "SW1" H 4300 2735 50  0000 C CNN
+F 1 "SPST" H 4300 2644 50  0000 C CNN
+F 2 "" H 4300 2500 50  0001 C CNN
+F 3 "~" H 4300 2500 50  0001 C CNN
+	1    4300 2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:LED D1
+U 1 1 6102FD24
+P 3100 2400
+F 0 "D1" V 3139 2282 50  0000 R CNN
+F 1 "LED" V 3048 2282 50  0000 R CNN
+F 2 "" H 3100 2400 50  0001 C CNN
+F 3 "~" H 3100 2400 50  0001 C CNN
+	1    3100 2400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R_Small_US R1
+U 1 1 61030C84
+P 3100 2150
+F 0 "R1" H 3168 2196 50  0000 L CNN
+F 1 "500" H 3168 2105 50  0000 L CNN
+F 2 "" H 3100 2150 50  0001 C CNN
+F 3 "~" H 3100 2150 50  0001 C CNN
+	1    3100 2150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4100 2500 3950 2500
+Wire Wire Line
+	3450 2400 3350 2400
+Wire Wire Line
+	3350 2400 3350 2050
+Wire Wire Line
+	3350 2050 3100 2050
+Wire Wire Line
+	3450 2500 3350 2500
+Wire Wire Line
+	3350 2500 3350 2550
+Wire Wire Line
+	3350 2550 3100 2550
+Wire Wire Line
+	4150 2750 5000 2750
+Wire Wire Line
+	3950 2600 4600 2600
+Wire Wire Line
+	4600 2600 4600 2550
+Wire Wire Line
+	4600 2500 4500 2500
+Wire Wire Line
+	4800 2550 4600 2550
+Connection ~ 4600 2550
+Wire Wire Line
+	4600 2550 4600 2500
+$Comp
+L Isolator:SFH617A-1 U1
+U 1 1 6103C6D1
+P 5300 2650
+F 0 "U1" H 5300 2333 50  0000 C CNN
+F 1 "OPTOCOUPLER" H 5300 2424 50  0000 C CNN
+F 2 "Package_DIP:DIP-4_W7.62mm" H 5100 2450 50  0001 L CIN
+F 3 "http://www.vishay.com/docs/83740/sfh617a.pdf" H 5300 2650 50  0001 L CNN
+	1    5300 2650
+	-1   0    0    1   
+$EndComp
+$EndSCHEMATC
