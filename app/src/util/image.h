@@ -7,6 +7,7 @@ namespace exaocbot {
 	struct image_buffer_t {
 		enum {
 			RGB,
+			RGBA,
 			YUYV_422
 		} format = RGB;
 		std::vector<uint8_t> buffer{};
@@ -20,5 +21,6 @@ namespace exaocbot {
 	};
 
 	void convert_yuyv_422_to_rgb(const image_buffer_t& image, uint8_t* output) noexcept;
+	void convert_yuyv_422_to_rgba(const image_buffer_t& image, uint8_t* output) noexcept;
 	void save_png(const image_buffer_t& image, const std::filesystem::path& path) noexcept;
 } // namespace exaocbot

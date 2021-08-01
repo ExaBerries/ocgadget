@@ -34,7 +34,8 @@ if host_machine.system() == 'darwin'
 		dependency('Metal'),
 		dependency('MetalKit'),
 		dependency('QuartzCore'),
-		dependency('AVFoundation')
+		dependency('AVFoundation'),
+		dependency('CoreMedia')
 	]
 endif
 
@@ -45,6 +46,7 @@ srcs = [
 	'src/ui/ui.cpp',
 	'src/ui/gl.cpp',
 	'src/capture/capture.cpp',
+	'src/capture/test_cap_src.cpp',
 	'src/util/image.cpp'
 ]
 

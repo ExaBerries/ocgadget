@@ -2,6 +2,20 @@
 #include <iostream>
 
 @interface avfoundation_playback_delegate : NSObject<AVCaptureVideoDataOutputSampleBufferDelegate>
+@property uint8_t* buffer;
+
+- (void)captureOutput:(AVCaptureOutput*)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection;
+
+@end
+
+@implementation avfoundation_playback_delegate 
+
+- (void)captureOutput:(AVCaptureOutput*)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection {
+	CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+	CVPixelBufferLockBaseAddress(imageBuffer, CVPixelBufferLockFlags(0));
+	std::memcpy(_buffer, CVPixelBufferGetBaseAddress(imageBuffer), 1920u * 1080u * 2u);
+	CVPixelBufferUnlockBaseAddress(imageBuffer, CVPixelBufferLockFlags(0));
+}
 
 @end
 
@@ -18,13 +32,16 @@ namespace exaocbot {
 		avfoundation_playback_delegate* delegate = nullptr;
 
 		void load_texture_data(image_buffer_t& image) noexcept {
+			std::memcpy(image.buffer.data(), delegate.buffer, image.buffer.size());
 		}
 
 		void start_streaming() noexcept {
+			delegate.buffer = new uint8_t[1920u * 1080u * 2u];
 			[session startRunning];
 		}
 
 		void stop_streaming() noexcept {
+			delete[] delegate.buffer;
 		}
 	};
 
@@ -35,21 +52,28 @@ namespace exaocbot {
 		playback.width = state.capture_config.img_config.width;
 		playback.height = state.capture_config.img_config.height;
 		playback.device = state.capture_config.current_device;
+		playback.image_format = image_buffer_t::YUYV_422;
 
 		auto& avfoundation_device = avfoundation_devices[state.capture_config.current_device.get()];
 
 		NSError* error = nullptr;
 		playback.input = [AVCaptureDeviceInput deviceInputWithDevice:avfoundation_device.avf_device error:&error];
 
+		if (error) {
+			NSLog(@"%@", [error userInfo]);
+		}
+
 		playback.output = [[AVCaptureVideoDataOutput alloc] init];
 		playback.output.alwaysDiscardsLateVideoFrames = true;
+
+		playback.delegate = [[avfoundation_playback_delegate alloc] init];
 
 		dispatch_queue_t queue;
 		queue = dispatch_queue_create("exaocbot_queue", NULL);
 		[playback.output setSampleBufferDelegate:playback.delegate queue:queue];
 
 		NSString* key = (NSString*)kCVPixelBufferPixelFormatTypeKey; 
-		NSNumber* value = [NSNumber numberWithUnsignedInt:kCVPixelFormatType_24RGB];
+		NSNumber* value = [NSNumber numberWithUnsignedInt:kCVPixelFormatType_422YpCbCr8_yuvs];
 		NSDictionary* videoSettings = [NSDictionary dictionaryWithObject:value forKey:key];
 		[playback.output setVideoSettings:videoSettings]; 
 

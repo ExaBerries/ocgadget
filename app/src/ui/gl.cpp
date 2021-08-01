@@ -19,6 +19,7 @@ namespace exaocbot {
 		ui_state_t* ui_state = nullptr;;
 		GLuint capture_texture = 0;
 		GLuint capture_render_program = 0;
+		GLuint capture_vertex_array = 0;
 		GLuint capture_vertex_buffer = 0;
 	};
 
@@ -88,6 +89,38 @@ namespace exaocbot {
 
 		[[nodiscard]] image_buffer_t::image_format_t input_format() noexcept override {
 			return image_buffer_t::RGB;
+		}
+	};
+
+	struct gl_rgba_passthrough_buffer_converter : public image_buffer_converter_t {
+		gl_image_converter_data* data = nullptr;
+
+		gl_rgba_passthrough_buffer_converter(gl_image_converter_data* data) noexcept : data(data) {
+		}
+
+		virtual ~gl_rgba_passthrough_buffer_converter() noexcept = default;
+
+		void init() noexcept override {
+			glGenTextures(1, &data->capture_texture);
+			glActiveTexture(GL_TEXTURE0 + 2);
+			glBindTexture(GL_TEXTURE_2D, data->capture_texture);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, data->ui_state->eob_state->capture_state.image_buffer->width, data->ui_state->eob_state->capture_state.image_buffer->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		}
+
+		void load_texture() noexcept override {
+			glActiveTexture(GL_TEXTURE0 + 2);
+			glBindTexture(GL_TEXTURE_2D, data->capture_texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, data->ui_state->eob_state->capture_state.image_buffer->width, data->ui_state->eob_state->capture_state.image_buffer->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data->ui_state->eob_state->capture_state.image_buffer->buffer.data());
+		}
+
+		void cleanup() noexcept override {
+			glDeleteTextures(1, &data->capture_texture);
+		}
+
+		[[nodiscard]] image_buffer_t::image_format_t input_format() noexcept override {
+			return image_buffer_t::RGBA;
 		}
 	};
 
@@ -269,12 +302,9 @@ void main() {
 		}
 
 		void init_glfw_hints() noexcept override {
-			#if defined(__linux__)
-				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-			#elif defined(__APPLE__)
-				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+			#if defined(__APPLE__)
 				glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 				glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 			#endif
@@ -305,12 +335,8 @@ void main() {
 		
 		void init() noexcept override {
 			ImGui_ImplGlfw_InitForOpenGL(ui_state->window, true);
-			
-			#if defined(__linux__)
-				ImGui_ImplOpenGL3_Init("#version 130");
-			#elif defined(__APPLE__)
-				ImGui_ImplOpenGL3_Init("#version 150");
-			#endif
+		
+			ImGui_ImplOpenGL3_Init("#version 150");
 
 			GLfloat vertices[] = {-1, -1, 0,
 									3, -1, 0,
@@ -318,9 +344,11 @@ void main() {
 
 			glEnable(GL_TEXTURE_2D);
 
+			GLint val;
+
 			GLuint vert = glCreateShader(GL_VERTEX_SHADER);
 			const std::string vert_str =
-R"***(#version 130
+R"***(#version 150
 in vec3 pos;
 out vec2 uv;
 
@@ -333,9 +361,16 @@ void main() {
 			glShaderSource(vert, 1, &vert_str_ptr, &vert_len);
 			glCompileShader(vert);
 
+			glGetShaderiv(vert, GL_COMPILE_STATUS, &val);
+			if (val == GL_FALSE) {
+				char log[1024];
+				glGetShaderInfoLog(vert, 1024, NULL, log);
+				std::cout << log << std::endl;
+			}
+
 			GLuint frag = glCreateShader(GL_FRAGMENT_SHADER);
 			const std::string frag_str =
-R"***(#version 130
+R"***(#version 150
 in vec2 uv;
 uniform sampler2D tex;
 out vec4 col;
@@ -348,18 +383,27 @@ void main() {
 			glShaderSource(frag, 1, &frag_str_ptr, &frag_len);
 			glCompileShader(frag);
 
+			glGetShaderiv(frag, GL_COMPILE_STATUS, &val);
+			if (val == GL_FALSE) {
+				char log[1024];
+				glGetShaderInfoLog(frag, 1024, NULL, log);
+				std::cout << log << std::endl;
+			}
+
 			data.capture_render_program = glCreateProgram();
 			glAttachShader(data.capture_render_program, vert);
 			glAttachShader(data.capture_render_program, frag);
 			glLinkProgram(data.capture_render_program);
 			glValidateProgram(data.capture_render_program);
 
+
+			glGenVertexArrays(1, &data.capture_vertex_array);
+			glBindVertexArray(data.capture_vertex_array);
 			glGenBuffers(1, &data.capture_vertex_buffer);
 			glBindBuffer(GL_ARRAY_BUFFER, data.capture_vertex_buffer);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 			glEnableVertexAttribArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, data.capture_vertex_buffer);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 		}
 
 		void loop_pre_imgui() noexcept override {
@@ -386,8 +430,8 @@ void main() {
 				glActiveTexture(GL_TEXTURE0 + 2);
 				glBindTexture(GL_TEXTURE_2D, data.capture_texture);
 				glUniform1i(glGetUniformLocation(data.capture_render_program, "tex"), 2);
+				glBindVertexArray(data.capture_vertex_array);
 				glEnableVertexAttribArray(0);
-				glBindBuffer(GL_ARRAY_BUFFER, data.capture_vertex_buffer);
 				glDrawArrays(GL_TRIANGLES, 0, 3);
 			}
 
@@ -403,6 +447,8 @@ void main() {
 		[[nodiscard]] std::unique_ptr<image_buffer_converter_t> create_image_buffer_converter(image_buffer_t::image_format_t format) noexcept override {
 			if (format == image_buffer_t::RGB) {
 				return std::make_unique<gl_rgb_passthrough_buffer_converter>(&data);
+			} else if (format == image_buffer_t::RGBA) { 
+				return std::make_unique<gl_rgba_passthrough_buffer_converter>(&data);
 			} else if (format == image_buffer_t::YUYV_422) {
 				if (gl_major >= 4 && gl_minor >= 3) {
 					std::cout << "using compute yuyv 422 decoder" << std::endl;
