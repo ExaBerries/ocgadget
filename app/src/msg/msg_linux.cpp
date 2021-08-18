@@ -3,7 +3,7 @@ extern "C" {
 	#include <unistd.h>
 	#include <fcntl.h>
 	#include <termio.h>
-	#include <io/ioctl.h>
+	#include <sys/ioctl.h>
 }
 
 namespace exaocbot {

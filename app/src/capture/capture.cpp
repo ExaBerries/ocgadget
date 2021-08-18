@@ -1,5 +1,6 @@
 #include "capture.h"
 #include <iostream>
+#include <algorithm>
 #include <unistd.h>
 
 namespace exaocbot {
