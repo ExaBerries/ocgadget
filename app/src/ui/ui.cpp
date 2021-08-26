@@ -11,6 +11,7 @@
 #include <utility>
 #include <chrono>
 #include <filesystem>
+#include <thread>
 
 namespace exaocbot {
 	#ifndef __APPLE__
@@ -301,18 +302,26 @@ namespace exaocbot {
 		}
 	}
 
-	static void create_glfw_window(ui_state_t& ui_state, glfw_usr_ptr& glfw_user_pointer) noexcept {
-		ui_state.window = glfwCreateWindow(1920, 1080, "exaocbot", NULL, NULL);
-		if (ui_state.window == nullptr) {
-			std::cerr << "could not create glfw window" << std::endl;
+	static void create_capture_glfw_window(ui_state_t& ui_state, glfw_usr_ptr& glfw_user_pointer) noexcept {
+		ui_state.capture_window = glfwCreateWindow(1920, 1080, "exaocbot capture", NULL, NULL);
+		if (ui_state.capture_window == nullptr) {
+			std::cerr << "could not create capture glfw window" << std::endl;
 			std::exit(EXIT_FAILURE);
 		}
 
-		glfwSetWindowUserPointer(ui_state.window, &glfw_user_pointer);
-		glfwSetKeyCallback(ui_state.window, key_callback);
-		glfwSetCursorPosCallback(ui_state.window, cursor_position_callback);
-		glfwSetMouseButtonCallback(ui_state.window, mouse_button_callback);
-		glfwSetScrollCallback(ui_state.window, scroll_callback);
+		glfwSetWindowUserPointer(ui_state.capture_window, &glfw_user_pointer);
+		glfwSetKeyCallback(ui_state.capture_window, key_callback);
+		glfwSetCursorPosCallback(ui_state.capture_window, cursor_position_callback);
+		glfwSetMouseButtonCallback(ui_state.capture_window, mouse_button_callback);
+		glfwSetScrollCallback(ui_state.capture_window, scroll_callback);
+	}
+
+	static void create_ui_glfw_window(ui_state_t& ui_state, glfw_usr_ptr& glfw_user_pointer) noexcept {
+		ui_state.ui_window = glfwCreateWindow(1280, 720, "exaocbot", NULL, NULL);
+		if (ui_state.ui_window == nullptr) {
+			std::cerr << "could not create glfw window" << std::endl;
+			std::exit(EXIT_FAILURE);
+		}
 	}
 
 	static void init_imgui(ui_state_t& ui_state) noexcept {
@@ -410,9 +419,8 @@ namespace exaocbot {
 	}
 
 	static void cleanup_ui(ui_state_t& ui_state) noexcept {
-		ImGui::DestroyContext();
-
-		glfwDestroyWindow(ui_state.window);
+		glfwDestroyWindow(ui_state.capture_window);
+		glfwDestroyWindow(ui_state.ui_window);
 		glfwTerminate();
 	}
 
@@ -439,21 +447,40 @@ namespace exaocbot {
 			std::exit(EXIT_FAILURE);
 		}
 
-		ui_state.renderer->init_glfw_hints();
-		create_glfw_window(ui_state, glfw_user_pointer);
-		ui_state.renderer->glfw_window_created();
-		init_imgui(ui_state);
-		ui_state.renderer->init();
+		std::thread ui_thread([&]() noexcept -> void {
+			ui_state.renderer->glfw_hints_ui();
+			create_ui_glfw_window(ui_state, glfw_user_pointer);
+			ui_state.renderer->glfw_ui_window_created();
+			init_imgui(ui_state);
+			ui_state.renderer->init_ui();
 
-		while (!glfwWindowShouldClose(ui_state.window)) {
+			while (!glfwWindowShouldClose(ui_state.ui_window)) {
+				glfwPollEvents();
+
+				ui_state.renderer->loop_pre_imgui();
+				loop_imgui(ui_state);
+				ui_state.renderer->loop_ui();
+			}
+
+			ui_state.renderer->cleanup_ui();
+
+			ImGui::DestroyContext();
+
+			glfwSetWindowShouldClose(ui_state.capture_window, GLFW_TRUE);
+		});
+
+		ui_state.renderer->glfw_hints_capture();
+		create_capture_glfw_window(ui_state, glfw_user_pointer);
+		ui_state.renderer->glfw_capture_window_created();
+		ui_state.renderer->init_capture();
+
+		while (!glfwWindowShouldClose(ui_state.capture_window)) {
 			glfwPollEvents();
 
 			if (ui_state.input_capture) {
-				glfwSetInputMode(ui_state.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-				ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+				glfwSetInputMode(ui_state.capture_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 			} else {
-				glfwSetInputMode(ui_state.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-				ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+				glfwSetInputMode(ui_state.capture_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			}
 
 			if (ui_state.eob_state->capture_state.playback != nullptr && (ui_state.image_buffer_converter == nullptr || ui_state.image_buffer_converter->input_format() != ui_state.eob_state->capture_state.playback->image_format)) {
@@ -465,12 +492,14 @@ namespace exaocbot {
 				ui_state.image_buffer_converter->init();
 			}
 
-			ui_state.renderer->loop_pre_imgui();
-			loop_imgui(ui_state);
-			ui_state.renderer->loop();
+			ui_state.renderer->loop_capture();
 		}
 
-		ui_state.renderer->cleanup();
+		ui_state.renderer->cleanup_capture();
+		glfwSetWindowShouldClose(ui_state.ui_window, GLFW_TRUE);
+
+		ui_thread.join();
+
 		cleanup_ui(ui_state);
 	}
 } // namespace exaocbot

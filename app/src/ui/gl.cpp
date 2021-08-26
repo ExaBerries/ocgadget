@@ -301,7 +301,7 @@ void main() {
 			data.ui_state = state;
 		}
 
-		void init_glfw_hints() noexcept override {
+		void glfw_hints_capture() noexcept override {
 			#if defined(__APPLE__)
 				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -311,8 +311,18 @@ void main() {
 			//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 		}
 
-		void glfw_window_created() noexcept override {
-			glfwMakeContextCurrent(ui_state->window);
+		void glfw_hints_ui() noexcept override {
+			#if defined(__APPLE__)
+				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+				glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+				glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+			#endif
+			//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+		}
+
+		void glfw_capture_window_created() noexcept override {
+			glfwMakeContextCurrent(ui_state->capture_window);
 			glfwSwapInterval(1);
 
 			glewExperimental = true;
@@ -332,12 +342,19 @@ void main() {
 			glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 			glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE);*/
 		}
-		
-		void init() noexcept override {
-			ImGui_ImplGlfw_InitForOpenGL(ui_state->window, true);
-		
-			ImGui_ImplOpenGL3_Init("#version 150");
 
+		void glfw_ui_window_created() noexcept override {
+			glfwMakeContextCurrent(ui_state->ui_window);
+			glfwSwapInterval(1);
+
+			glewExperimental = true;
+			if (glewInit() != GLEW_OK) {
+				std::cerr << "could not initalize glew" << std::endl;
+				std::exit(EXIT_FAILURE);
+			}
+		}
+
+		void init_capture() noexcept override {
 			GLfloat vertices[] = {-1, -1, 0,
 									3, -1, 0,
 									-1, 3, 0};
@@ -406,16 +423,20 @@ void main() {
 			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 		}
 
+		void init_ui() noexcept override {
+			ImGui_ImplGlfw_InitForOpenGL(ui_state->ui_window, true);
+			ImGui_ImplOpenGL3_Init("#version 150");
+		}
+
 		void loop_pre_imgui() noexcept override {
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 		}
 		
-		void loop() noexcept override {
-			ImGui::Render();
+		void loop_capture() noexcept override {
 			int display_w;
 			int display_h;
-			glfwGetFramebufferSize(ui_state->window, &display_w, &display_h);
+			glfwGetFramebufferSize(ui_state->capture_window, &display_w, &display_h);
 			glViewport(0, 0, display_w, display_h);
 			glClearColor(0.64f, 1.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -435,11 +456,29 @@ void main() {
 				glDrawArrays(GL_TRIANGLES, 0, 3);
 			}
 
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-			glfwSwapBuffers(ui_state->window);
+			glfwSwapBuffers(ui_state->capture_window);
 		}
 
-		void cleanup() noexcept override {
+		void loop_ui() noexcept override {
+			ImGui::Render();
+			int display_w;
+			int display_h;
+			glfwGetFramebufferSize(ui_state->ui_window, &display_w, &display_h);
+			glViewport(0, 0, display_w, display_h);
+			glClearColor(0.64f, 1.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			glfwSwapBuffers(ui_state->ui_window);
+		}
+
+		void cleanup_capture() noexcept override {
+			glDeleteTextures(1, &data.capture_texture);
+			glDeleteProgram(data.capture_render_program);
+			glDeleteVertexArrays(1, &data.capture_vertex_array);
+			glDeleteBuffers(1, &data.capture_vertex_buffer);
+		}
+
+		void cleanup_ui() noexcept override {
 			ImGui_ImplOpenGL3_Shutdown();
 			ImGui_ImplGlfw_Shutdown();
 		}
