@@ -11,8 +11,8 @@
 #include <optional>
 #include <filesystem>
 
-namespace exaocbot {
-	struct exaocbot_state {
+namespace ocgadget {
+	struct ocgadget_state {
 		capture_state_t capture_state{};
 		std::array<char, 16> part_name_str{};
 		std::array<char, 16> benchmark_name_short_str{};
@@ -23,5 +23,5 @@ namespace exaocbot {
 	};
 
 	[[nodiscard]] std::filesystem::path base_screenshot_folder() noexcept;
-	void save_screenshot(exaocbot_state& state) noexcept;
-} // namespace exaocbot
+	void save_screenshot(ocgadget_state& state) noexcept;
+} // namespace ocgadget

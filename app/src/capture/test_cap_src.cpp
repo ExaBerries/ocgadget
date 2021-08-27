@@ -1,7 +1,7 @@
 #include "test_cap_src.h"
 #include <iostream>
 
-namespace exaocbot {
+namespace ocgadget {
 	struct test_cap_src_playback : public capture_playback {
 		void load_texture_data(image_buffer_t& image) noexcept {
 			for (uint32_t x = 0; x < image.width; x++) {
@@ -44,4 +44,4 @@ namespace exaocbot {
 		new_capture_device->name = "test capture device";
 		new_capture_device->api = this;
 	}
-} // namespace exaocbot
+} // namespace ocgadget

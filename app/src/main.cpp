@@ -1,17 +1,17 @@
-#include "exaocbot.h"
+#include "ocgadget.h"
 #include "capture/capture.h"
 #include "ui/ui.h"
 #include <thread>
 #include <cstring>
 #include <iostream>
 
-namespace exaocbot {
-} // namespace exaocbot
+namespace ocgadget {
+} // namespace ocgadget
 
 int main(int argc, char* argv[]) {
-	using namespace exaocbot;
+	using namespace ocgadget;
 
-	exaocbot_state state{};
+	ocgadget_state state{};
 	std::memcpy(state.part_name_str.data(), "part name", 10);
 	std::memcpy(state.benchmark_name_short_str.data(), "benchmark", 10);
 	std::memcpy(state.benchmark_score_str.data(), "score", 6);

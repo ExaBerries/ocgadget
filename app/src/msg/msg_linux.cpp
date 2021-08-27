@@ -6,7 +6,7 @@ extern "C" {
 	#include <sys/ioctl.h>
 }
 
-namespace exaocbot {
+namespace ocgadget {
 	struct msg_state_linux : public msg_state_impl {
 
 		virtual ~msg_state_linux() noexcept = default;
@@ -25,4 +25,4 @@ namespace exaocbot {
 	void msg_init_impl(msg_state_t& state) noexcept {
 		state.impl = std::make_unique<msg_state_linux>();
 	}
-} // namespace exaocbot
+} // namespace ocgadget

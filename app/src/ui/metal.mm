@@ -9,7 +9,7 @@
 #include <GLFW/glfw3native.h>
 #include <iostream>
 
-namespace exaocbot {
+namespace ocgadget {
 	struct mtl_image_converter_data {
 		ui_state_t* ui_state = nullptr;;
 		id<MTLDevice> device;
@@ -244,4 +244,4 @@ fragment float4 frag(RasterizerData in [[stage_in]], texture2d<float> tex [[text
 	[[nodiscard]] std::optional<std::unique_ptr<renderer_t>> init_renderer<render_api::METAL>(ui_state_t* state) noexcept {
 		return std::make_unique<metal_renderer>(state);
 	}
-} // namespace exaocbot
+} // namespace ocgadget

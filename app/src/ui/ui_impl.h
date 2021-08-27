@@ -8,7 +8,7 @@
 #include <optional>
 #include <memory>
 
-namespace exaocbot {
+namespace ocgadget {
 	struct image_buffer_converter_t {
 		virtual ~image_buffer_converter_t() noexcept = default;
 		virtual void init() noexcept = 0;
@@ -37,7 +37,7 @@ namespace exaocbot {
 	};
 
 	struct ui_state_t {
-		exaocbot_state* eob_state = nullptr;
+		ocgadget_state* eob_state = nullptr;
 		GLFWwindow* capture_window = nullptr;
 		GLFWwindow* ui_window = nullptr;
 		std::unique_ptr<renderer_t> renderer{};
@@ -51,4 +51,4 @@ namespace exaocbot {
 
 	template <render_api api>
 	[[nodiscard]] std::optional<std::unique_ptr<renderer_t>> init_renderer(ui_state_t* state) noexcept;
-} // namespace exaocbot
+} // namespace ocgadget

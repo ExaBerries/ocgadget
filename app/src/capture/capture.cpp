@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <unistd.h>
 
-namespace exaocbot {
+namespace ocgadget {
 	static void find_capture_devices(capture_state_t& state) noexcept {
 		for (auto& api_impl : state.capture_apis) {
 			api_impl->find_capture_devices(state);
@@ -69,4 +69,4 @@ namespace exaocbot {
 
 	void capture_cleanup(capture_state_t& state) noexcept {
 	}
-} // namespace exaocbot
+} // namespace ocgadget

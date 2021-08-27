@@ -1,7 +1,7 @@
 from conans import ConanFile, Meson
 
-class exaocbot_msgprotocol(ConanFile):
-	name = "exaocbot_msgprotocol"
+class ocgadget_msgprotocol(ConanFile):
+	name = "ocgadget_msgprotocol"
 	version = "0.1.0"
 	requires = []
 	generators = ["pkg_config"]

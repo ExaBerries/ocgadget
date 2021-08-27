@@ -13,7 +13,7 @@
 #include <filesystem>
 #include <thread>
 
-namespace exaocbot {
+namespace ocgadget {
 	#ifndef __APPLE__
 		template <>
 		[[nodiscard]] std::optional<std::unique_ptr<renderer_t>> init_renderer<render_api::METAL>(ui_state_t* state) noexcept {
@@ -303,7 +303,7 @@ namespace exaocbot {
 	}
 
 	static void create_capture_glfw_window(ui_state_t& ui_state, glfw_usr_ptr& glfw_user_pointer) noexcept {
-		ui_state.capture_window = glfwCreateWindow(1920, 1080, "exaocbot capture", NULL, NULL);
+		ui_state.capture_window = glfwCreateWindow(1920, 1080, "ocgadget capture", NULL, NULL);
 		if (ui_state.capture_window == nullptr) {
 			std::cerr << "could not create capture glfw window" << std::endl;
 			std::exit(EXIT_FAILURE);
@@ -317,7 +317,7 @@ namespace exaocbot {
 	}
 
 	static void create_ui_glfw_window(ui_state_t& ui_state, glfw_usr_ptr& glfw_user_pointer) noexcept {
-		ui_state.ui_window = glfwCreateWindow(1280, 720, "exaocbot", NULL, NULL);
+		ui_state.ui_window = glfwCreateWindow(1280, 720, "ocgadget", NULL, NULL);
 		if (ui_state.ui_window == nullptr) {
 			std::cerr << "could not create glfw window" << std::endl;
 			std::exit(EXIT_FAILURE);
@@ -338,7 +338,7 @@ namespace exaocbot {
 
 		auto& capture_state = ui_state.eob_state->capture_state;
 		{
-			ImGui::Begin("exaocbot app");
+			ImGui::Begin("ocgadget app");
 
 			{
 				std::scoped_lock devices_lock{capture_state.capture_devices_mutex};
@@ -404,7 +404,7 @@ namespace exaocbot {
 		}
 
 		{
-			ImGui::Begin("exaocbot controller");
+			ImGui::Begin("ocgadget controller");
 			ImGui::Text("State: ");
 			ImGui::SameLine();
 			if (ui_state.eob_state->msg_state.connection_state == msg_state_t::CONNECTED) {
@@ -424,7 +424,7 @@ namespace exaocbot {
 		glfwTerminate();
 	}
 
-	void create_ui(exaocbot_state& state) noexcept {
+	void create_ui(ocgadget_state& state) noexcept {
 		ui_state_t ui_state;
 		ui_state.eob_state = &state;
 
@@ -502,4 +502,4 @@ namespace exaocbot {
 
 		cleanup_ui(ui_state);
 	}
-} // namespace exaocbot
+} // namespace ocgadget

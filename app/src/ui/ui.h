@@ -1,12 +1,12 @@
 #pragma once
-#include "../exaocbot.h"
+#include "../ocgadget.h"
 
-namespace exaocbot {
+namespace ocgadget {
 	enum class render_api {
 		OPENGL,
 		METAL,
 		VULKAN
 	};
 
-	void create_ui(exaocbot_state& state) noexcept;
-} // namespace exaocbot
+	void create_ui(ocgadget_state& state) noexcept;
+} // namespace ocgadget

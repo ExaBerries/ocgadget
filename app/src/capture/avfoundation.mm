@@ -19,7 +19,7 @@
 
 @end
 
-namespace exaocbot {
+namespace ocgadget {
 	avfoundation::avfoundation() noexcept {
 		NSArray* device_types = [NSArray arrayWithObjects:AVCaptureDeviceTypeExternalUnknown, nil];
 		discovery_session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:device_types mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
@@ -69,7 +69,7 @@ namespace exaocbot {
 		playback.delegate = [[avfoundation_playback_delegate alloc] init];
 
 		dispatch_queue_t queue;
-		queue = dispatch_queue_create("exaocbot_queue", NULL);
+		queue = dispatch_queue_create("ocgadget_queue", NULL);
 		[playback.output setSampleBufferDelegate:playback.delegate queue:queue];
 
 		NSString* key = (NSString*)kCVPixelBufferPixelFormatTypeKey; 
@@ -138,4 +138,4 @@ namespace exaocbot {
 		state.capture_devices = std::move(new_capture_devices);
 		avfoundation_devices = std::move(new_avfoundation_devices);
 	}
-} // namespace exaocbot
+} // namespace ocgadget

@@ -1,6 +1,6 @@
 #include "msg.h"
 
-namespace exaocbot {
+namespace ocgadget {
 	void msg_init(msg_state_t& state) noexcept {
 		msg_init_impl(state);
 		state.impl->init(state);
@@ -13,4 +13,4 @@ namespace exaocbot {
 	void msg_cleanup(msg_state_t& state) noexcept {
 		state.impl->cleanup(state);
 	}
-} // namespace exaocbot
+} // namespace ocgadget

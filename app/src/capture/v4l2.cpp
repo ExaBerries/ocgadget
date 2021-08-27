@@ -12,7 +12,7 @@ extern "C" {
 	#include <linux/videodev2.h>
 }
 
-namespace exaocbot {
+namespace ocgadget {
 	static std::string deocde_ioctl_error() noexcept {
 		switch (errno) {
 			case EINVAL:
@@ -234,4 +234,4 @@ namespace exaocbot {
 		state.capture_devices = std::move(new_capture_devices);
 		v4l2_devices = std::move(new_v4l2_devices);
 	}
-} // namespace exaocbot
+} // namespace ocgadget

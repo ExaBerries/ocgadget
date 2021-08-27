@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace exaocbot {
+namespace ocgadget {
 	struct v4l2_capture_device {
 		std::string path{};
 		std::string name{};
@@ -17,4 +17,4 @@ namespace exaocbot {
 		[[nodiscard]] std::unique_ptr<capture_playback> create_capture_playback(capture_state_t& state) noexcept override;
 		void find_capture_devices(capture_state_t& state) noexcept override;
 	};
-} // namespace exaocbot
+} // namespace ocgadget

@@ -1,5 +1,5 @@
 [requires]
-exaocbot_msgprotocol/[>=0.1.0]
+ocgadget_msgprotocol/[>=0.1.0]
 
 [generators]
 pkg_config

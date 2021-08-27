@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-namespace exaocbot {
+namespace ocgadget {
 	constexpr uint32_t USB_PROTOCOL_REVISION = 0x01;
 
 	struct msg_heartbeat {
@@ -28,4 +28,4 @@ namespace exaocbot {
 		constexpr static uint32_t MSG_ID = 0x04;
 		constexpr static bool ACKNOWLEDGE = true;
 	};
-} // namespace exaocbot
+} // namespace ocgadget

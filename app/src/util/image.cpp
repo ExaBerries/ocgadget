@@ -1,7 +1,7 @@
 #include "image.h"
 #include <png++/png.hpp>
 
-namespace exaocbot {
+namespace ocgadget {
 	image_buffer_t::image_buffer_t(image_buffer_t::image_format_t format, uint32_t width, uint32_t height) noexcept : format(format), width(width), height(height) {
 		switch (format) {
 			case image_buffer_t::RGB:
@@ -169,4 +169,4 @@ namespace exaocbot {
 			save_png_image(rgb);
 		}
 	}
-} // namespace exaocbot
+} // namespace ocgadget

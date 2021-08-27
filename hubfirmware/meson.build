@@ -1,5 +1,5 @@
 project(
-	'exaocbot_hubfirmware',
+	'ocgadget_hubfirmware',
 	['cpp', 'c'],
 	default_options: [
 		'buildtype=minsize',
@@ -22,7 +22,7 @@ exe = executable(
 		'src/hubfirmware.cpp'
 	],
 	dependencies: [
-		dependency('exaocbot_msgprotocol')
+		dependency('ocgadget_msgprotocol')
 	],
 	link_with: ardulib,
 	link_args: '-lm'

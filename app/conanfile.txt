@@ -1,5 +1,5 @@
 [requires]
-exaocbot_msgprotocol/[>=0.1.0]
+ocgadget_msgprotocol/[>=0.1.0]
 glfw/[>=3.3.4]
 glew/[>=2.2.0]
 pngpp/[>=0.2.1]

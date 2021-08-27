@@ -14,7 +14,7 @@
 #include <imgui_impl_opengl3.h>
 #include <iostream>
 
-namespace exaocbot {
+namespace ocgadget {
 	struct gl_image_converter_data {
 		ui_state_t* ui_state = nullptr;;
 		GLuint capture_texture = 0;
@@ -506,4 +506,4 @@ void main() {
 	[[nodiscard]] std::optional<std::unique_ptr<renderer_t>> init_renderer<render_api::OPENGL>(ui_state_t* state) noexcept {
 		return std::make_unique<opengl_renderer>(state);
 	}
-} // namespace exaocbot
+} // namespace ocgadget

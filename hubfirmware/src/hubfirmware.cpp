@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <exaocbot_usb_protocol.h>
+#include <ocgadget_usb_protocol.h>
 
 constexpr int LED = 17;
 int data = 0;

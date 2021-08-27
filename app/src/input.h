@@ -1,7 +1,7 @@
 #pragma once
 #include <variant>
 
-namespace exaocbot {
+namespace ocgadget {
 	struct keyboard_input {
 		enum {
 			DOWN,
@@ -138,4 +138,4 @@ namespace exaocbot {
 	};
 
 	using input_event = std::variant<keyboard_input, mouse_movement_input, mouse_button_input, mouse_scroll_input>;
-} // namespace exaocbot
+} // namespace ocgadget

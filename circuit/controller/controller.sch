@@ -14,12 +14,12 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L exaocbot_lib:RP2040 U?
+L ocgadget_lib:RP2040 U?
 U 1 1 610429C8
 P 4450 3300
 F 0 "U?" H 5344 3146 50  0000 L CNN
 F 1 "RP2040" H 5344 3055 50  0000 L CNN
-F 2 "exaocbot_lib_fp:QFN-56-RP2040" H 3750 4050 50  0001 C CNN
+F 2 "ocgadget_lib_fp:QFN-56-RP2040" H 3750 4050 50  0001 C CNN
 F 3 "https://datasheets.raspberrypi.org/rp2040/rp2040-datasheet.pdf" H 3750 4050 50  0001 C CNN
 	1    4450 3300
 	1    0    0    -1  
