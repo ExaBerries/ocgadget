@@ -84,21 +84,37 @@ namespace ocgadget {
 	struct metal_renderer : public renderer_t {
 		ui_state_t* ui_state = nullptr;
 		mtl_image_converter_data data{};
-		id<CAMetalDrawable> current_drawable;
-		NSWindow* cocoa_window = nullptr;
+		id<CAMetalDrawable> current_capture_drawable;
+		NSWindow* capture_cocoa_window = nullptr;
+		NSWindow* ui_cocoa_window = nullptr;
+		id<MTLDevice> ui_device;
+		CAMetalLayer* ui_layer = nullptr;
+		id<CAMetalDrawable> current_ui_drawable;
+		id<MTLCommandQueue> ui_command_queue;
+		MTLRenderPassDescriptor* ui_main_pass = nullptr;
+		id<MTLCommandBuffer> ui_buffer;
+		id<MTLRenderCommandEncoder> ui_encoder;
+		std::mutex commit_mutex;
 	
 		metal_renderer(ui_state_t* state) noexcept : ui_state(state) {
 			data.ui_state = state;
 		}
 
-		void init_glfw_hints() noexcept {
+		void glfw_hints_capture() noexcept override {
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		}
+
+		void glfw_hints_ui() noexcept override {
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		}
 		
-		void glfw_window_created() noexcept {
+		void glfw_capture_window_created() noexcept override {
+		}
+
+		void glfw_ui_window_created() noexcept override {
 		}
 		
-		void init() noexcept {
+		void init_capture() noexcept override {
 			data.device = MTLCreateSystemDefaultDevice();
 			data.command_queue = [data.device newCommandQueue];
 
@@ -107,12 +123,9 @@ namespace ocgadget {
 			data.layer.opaque = YES;
 			data.layer.pixelFormat = MTLPixelFormatBGRA8Unorm;
 
-			cocoa_window = glfwGetCocoaWindow(ui_state->window);
-			cocoa_window.contentView.layer = data.layer;
-			cocoa_window.contentView.wantsLayer = YES;
-
-			ImGui_ImplGlfw_InitForOpenGL(ui_state->window, true);
-			ImGui_ImplMetal_Init(data.device);
+			capture_cocoa_window = glfwGetCocoaWindow(ui_state->capture_window);
+			capture_cocoa_window.contentView.layer = data.layer;
+			capture_cocoa_window.contentView.wantsLayer = YES;
 
 			data.main_pass = [MTLRenderPassDescriptor renderPassDescriptor];
 			data.main_pass.colorAttachments[0].clearColor = MTLClearColorMake(0.64f, 1.0f, 0.0f, 1.0f);
@@ -178,25 +191,57 @@ fragment float4 frag(RasterizerData in [[stage_in]], texture2d<float> tex [[text
 
 			data.state = [data.device newRenderPipelineStateWithDescriptor:state_desc error:&error];
 		}
+
+		void init_ui() noexcept override {
+			ui_device = MTLCreateSystemDefaultDevice();
+			ui_command_queue = [ui_device newCommandQueue];
+
+			ui_layer = [CAMetalLayer layer];
+			ui_layer.device = ui_device;
+			ui_layer.opaque = YES;
+			ui_layer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+
+			ui_cocoa_window = glfwGetCocoaWindow(ui_state->ui_window);
+			ui_cocoa_window.contentView.layer = ui_layer;
+			ui_cocoa_window.contentView.wantsLayer = YES;
+
+			ui_main_pass = [MTLRenderPassDescriptor renderPassDescriptor];
+			ui_main_pass.colorAttachments[0].clearColor = MTLClearColorMake(0.64f, 1.0f, 0.0f, 1.0f);
+			ui_main_pass.colorAttachments[0].loadAction = MTLLoadActionClear;
+			ui_main_pass.colorAttachments[0].storeAction = MTLStoreActionStore;
+			ui_main_pass.depthAttachment.texture = nullptr;
+
+			ImGui_ImplGlfw_InitForOpenGL(ui_state->ui_window, true);
+			ImGui_ImplMetal_Init(ui_device);
+		}
 		
-		void loop_pre_imgui() noexcept {
+		void loop_pre_imgui() noexcept override {
 			int display_w;
 			int display_h;
-			glfwGetFramebufferSize(ui_state->window, &display_w, &display_h);
-			data.layer.drawableSize = CGSizeMake(display_w, display_h);
-			current_drawable = [data.layer nextDrawable];
+			glfwGetFramebufferSize(ui_state->ui_window, &display_w, &display_h);
+			ui_layer.drawableSize = CGSizeMake(display_w, display_h);
+			current_ui_drawable = [ui_layer nextDrawable];
 			
-			data.buffer = [data.command_queue commandBuffer];
+			ui_buffer = [ui_command_queue commandBuffer];
+
+			ui_main_pass.colorAttachments[0].texture = current_ui_drawable.texture;
 			
-			data.main_pass.colorAttachments[0].texture = current_drawable.texture;
-			
-			ImGui_ImplMetal_NewFrame(data.main_pass);
+			ImGui_ImplMetal_NewFrame(ui_main_pass);
 			ImGui_ImplGlfw_NewFrame();
 		}
 		
-		void loop() noexcept {
-			ImGui::Render();
-			ImDrawData* draw_data = ImGui::GetDrawData();
+		void loop_capture() noexcept override {
+			int display_w;
+			int display_h;
+			glfwGetFramebufferSize(ui_state->capture_window, &display_w, &display_h);
+			data.layer.drawableSize = CGSizeMake(display_w, display_h);
+			current_capture_drawable = [data.layer nextDrawable];
+
+			data.buffer = [data.command_queue commandBuffer];
+			[data.buffer enqueue];
+			
+			data.main_pass.colorAttachments[0].texture = current_capture_drawable.texture;
+
 			data.encoder = [data.buffer renderCommandEncoderWithDescriptor:data.main_pass];
 			if (ui_state->image_buffer_converter != nullptr) {
 				[data.encoder pushDebugGroup:@"capture rendering"];
@@ -216,20 +261,34 @@ fragment float4 frag(RasterizerData in [[stage_in]], texture2d<float> tex [[text
 				[data.encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
 				[data.encoder popDebugGroup];
 			}
-			[data.encoder pushDebugGroup:@"Dear ImGui rendering"];
-			ImGui_ImplMetal_RenderDrawData(draw_data, data.buffer, data.encoder);
-			[data.encoder popDebugGroup];
 			[data.encoder endEncoding];
-			[data.buffer presentDrawable:current_drawable];
+			[data.buffer presentDrawable:current_capture_drawable];
+			std::scoped_lock lock{commit_mutex};
 			[data.buffer commit];
 		}
 		
-		void cleanup() noexcept {
+		void loop_ui() noexcept override {
+			ImGui::Render();
+			ImDrawData* draw_data = ImGui::GetDrawData();
+			ui_encoder = [ui_buffer renderCommandEncoderWithDescriptor:ui_main_pass];
+			[ui_encoder pushDebugGroup:@"Dear ImGui rendering"];
+			ImGui_ImplMetal_RenderDrawData(draw_data, ui_buffer, ui_encoder);
+			[ui_encoder popDebugGroup];
+			[ui_encoder endEncoding];
+			[ui_buffer presentDrawable:current_ui_drawable];
+			std::scoped_lock lock{commit_mutex};
+			[ui_buffer commit];
+		}
+
+		void cleanup_capture() noexcept override {
+		}
+
+		void cleanup_ui() noexcept override {
 			ImGui_ImplMetal_Shutdown();
 			ImGui_ImplGlfw_Shutdown();
 		}
 		
-		[[nodiscard]] virtual std::unique_ptr<image_buffer_converter_t> create_image_buffer_converter(image_buffer_t::image_format_t format) noexcept {
+		[[nodiscard]] virtual std::unique_ptr<image_buffer_converter_t> create_image_buffer_converter(image_buffer_t::image_format_t format) noexcept override {
 			if (format == image_buffer_t::RGBA) {
 				return std::make_unique<metal_rgba_passthrough_buffer_converter>(&data);
 			} else if (format == image_buffer_t::YUYV_422) {

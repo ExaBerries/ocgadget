@@ -49,6 +49,10 @@ namespace ocgadget {
 		using capture_combo_string_t = decltype(capture_combo_strings)::value_type;
 	};
 
+	void init_imgui(ui_state_t& ui_state) noexcept;
+	void loop_imgui(ui_state_t& ui_state) noexcept;
+	void cleanup_imgui(ui_state_t& ui_state) noexcept;
+
 	template <render_api api>
 	[[nodiscard]] std::optional<std::unique_ptr<renderer_t>> init_renderer(ui_state_t* state) noexcept;
 } // namespace ocgadget

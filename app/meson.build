@@ -44,6 +44,7 @@ srcs = [
 	'src/ocgadget.cpp',
 	'src/msg/msg.cpp',
 	'src/ui/ui.cpp',
+	'src/ui/imgui.cpp',
 	'src/ui/gl.cpp',
 	'src/capture/capture.cpp',
 	'src/capture/test_cap_src.cpp',
