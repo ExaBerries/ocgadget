@@ -2,6 +2,7 @@
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
+#include <cstring>
 
 namespace ocgadget {
 	void init_imgui(ui_state_t& ui_state) noexcept {

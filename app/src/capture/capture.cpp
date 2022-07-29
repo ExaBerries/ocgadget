@@ -1,7 +1,8 @@
 #include "capture.h"
 #include <iostream>
 #include <algorithm>
-#include <unistd.h>
+#include <thread>
+#include <chrono>
 
 namespace ocgadget {
 	static void find_capture_devices(capture_state_t& state) noexcept {
@@ -55,15 +56,15 @@ namespace ocgadget {
 
 		if (state.playback != nullptr && state.image_buffer != std::nullopt) {
 			if (state.image_buffer_state != image_buffer_state_t::WAITING_NEW) {
-				usleep(200);
+				std::this_thread::sleep_for(std::chrono::microseconds(200));
 				return;
 			}
 			std::scoped_lock lock{state.image_buffer_mutex};
 			state.playback->load_texture_data(*state.image_buffer);
 			state.image_buffer_state = image_buffer_state_t::BUFFER_WRITTEN;
-			usleep(12000);
+			std::this_thread::sleep_for(std::chrono::milliseconds(12));
 		} else {
-			usleep(64000);
+			std::this_thread::sleep_for(std::chrono::milliseconds(64));
 		}
 	}
 
