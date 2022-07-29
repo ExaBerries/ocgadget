@@ -357,25 +357,6 @@ namespace ocgadget {
 		init_imgui(ui_state);
 		ui_state.renderer->init_ui();
 
-		/*std::thread ui_thread([&]() noexcept -> void {
-			init_imgui(ui_state);
-			ui_state.renderer->init_ui();
-
-			while (!glfwWindowShouldClose(ui_state.ui_window)) {
-				//glfwPollEvents();
-
-				ui_state.renderer->loop_pre_imgui();
-				loop_imgui(ui_state);
-				ui_state.renderer->loop_ui();
-			}
-
-			ui_state.renderer->cleanup_ui();
-
-			cleanup_imgui(ui_state);
-
-			glfwSetWindowShouldClose(ui_state.capture_window, GLFW_TRUE);
-		});*/
-
 		ui_state.renderer->glfw_hints_capture();
 		create_capture_glfw_window(ui_state, glfw_user_pointer);
 		ui_state.renderer->glfw_capture_window_created();
@@ -413,8 +394,6 @@ namespace ocgadget {
 		ui_state.renderer->cleanup_capture();
 		glfwSetWindowShouldClose(ui_state.ui_window, GLFW_TRUE);
 		glfwSetWindowShouldClose(ui_state.capture_window, GLFW_TRUE);
-
-		//ui_thread.join();
 
 		cleanup_ui(ui_state);
 	}

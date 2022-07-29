@@ -304,6 +304,7 @@ void main() {
 		}
 
 		void glfw_hints_capture() noexcept override {
+			glfwMakeContextCurrent(ui_state->capture_window);
 			#if defined(__APPLE__)
 				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -314,6 +315,7 @@ void main() {
 		}
 
 		void glfw_hints_ui() noexcept override {
+			glfwMakeContextCurrent(ui_state->ui_window);
 			#if defined(__APPLE__)
 				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -357,9 +359,12 @@ void main() {
 		}
 
 		void init_capture() noexcept override {
-			GLfloat vertices[] = {-1, -1, 0,
-									3, -1, 0,
-									-1, 3, 0};
+			glfwMakeContextCurrent(ui_state->capture_window);
+			GLfloat vertices[] = {
+				-1, -1, 0,
+				3, -1, 0,
+				-1, 3, 0
+			};
 
 			glEnable(GL_TEXTURE_2D);
 
@@ -426,16 +431,19 @@ void main() {
 		}
 
 		void init_ui() noexcept override {
+			glfwMakeContextCurrent(ui_state->ui_window);
 			ImGui_ImplGlfw_InitForOpenGL(ui_state->ui_window, true);
 			ImGui_ImplOpenGL3_Init("#version 150");
 		}
 
 		void loop_pre_imgui() noexcept override {
+			glfwMakeContextCurrent(ui_state->ui_window);
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 		}
 		
 		void loop_capture() noexcept override {
+			glfwMakeContextCurrent(ui_state->capture_window);
 			int display_w;
 			int display_h;
 			glfwGetFramebufferSize(ui_state->capture_window, &display_w, &display_h);
@@ -462,6 +470,7 @@ void main() {
 		}
 
 		void loop_ui() noexcept override {
+			glfwMakeContextCurrent(ui_state->ui_window);
 			ImGui::Render();
 			int display_w;
 			int display_h;
@@ -474,18 +483,21 @@ void main() {
 		}
 
 		void cleanup_capture() noexcept override {
+			glfwMakeContextCurrent(ui_state->capture_window);
 			glDeleteTextures(1, &data.capture_texture);
 			glDeleteProgram(data.capture_render_program);
 			glDeleteVertexArrays(1, &data.capture_vertex_array);
 			glDeleteBuffers(1, &data.capture_vertex_buffer);
 		}
 
-		void cleanup_ui() noexcept override {
+		void cleanup_ui() noexcept override {\
+			glfwMakeContextCurrent(ui_state->ui_window);
 			ImGui_ImplOpenGL3_Shutdown();
 			ImGui_ImplGlfw_Shutdown();
 		}
 
 		[[nodiscard]] std::unique_ptr<image_buffer_converter_t> create_image_buffer_converter(image_buffer_t::image_format_t format) noexcept override {
+			glfwMakeContextCurrent(ui_state->capture_window);
 			if (format == image_buffer_t::RGB) {
 				return std::make_unique<gl_rgb_passthrough_buffer_converter>(&data);
 			} else if (format == image_buffer_t::RGBA) { 
