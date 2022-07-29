@@ -148,7 +148,7 @@ namespace ocgadget {
 					png_image[y][x].blue = rgb.buffer.data()[x * 3 + y * rgb.width * 3 + 2];
 				}
 			}
-			png_image.write(path.c_str());
+			png_image.write(path.string());
 		};
 
 		if (image.format == image_buffer_t::RGB) {

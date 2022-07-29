@@ -7,6 +7,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
+#elif defined(_WIN32)
+#include <GL/glew.h>
 #endif
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 #include <imgui.h>

@@ -1,5 +1,4 @@
 #include "test_cap_src.h"
-#include <iostream>
 
 namespace ocgadget {
 	struct test_cap_src_playback : public capture_playback {

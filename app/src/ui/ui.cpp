@@ -22,7 +22,7 @@ namespace ocgadget {
 	#endif
 
 	static void glfw_error_callback(int error, const char* description) noexcept {
-		std::cerr << "glfw error: " << error << '\t' << description << std::endl;
+		//std::cerr << "glfw error: " << error << '\t' << description << std::endl;
 	}
 
 	struct image_buffer_converter_t;

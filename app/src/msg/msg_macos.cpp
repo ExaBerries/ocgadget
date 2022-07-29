@@ -1,7 +1,6 @@
 #include "msg.h"
-extern "C" {
-	#include <unistd.h>
-}
+#include <thread>
+#include <chrono>
 
 namespace ocgadget {
 	struct msg_state_macos : public msg_state_impl {
@@ -12,7 +11,7 @@ namespace ocgadget {
 		}
 
 		void loop(msg_state_t& state) noexcept override {
-			usleep(8192);
+			std::this_thread::sleep_for(std::chrono::microseconds(8192));
 		}
 
 		void cleanup(msg_state_t& state) noexcept override {

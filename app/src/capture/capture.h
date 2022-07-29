@@ -34,6 +34,7 @@ namespace ocgadget {
 		image_buffer_t::image_format_t image_format = image_buffer_t::RGB;
 		bool capturing = false;
 
+		capture_playback() noexcept = default;
 		virtual ~capture_playback() noexcept = default;
 
 		virtual void load_texture_data(image_buffer_t& image) noexcept = 0;

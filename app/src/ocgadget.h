@@ -14,9 +14,9 @@
 namespace ocgadget {
 	struct ocgadget_state {
 		capture_state_t capture_state{};
-		std::array<char, 16> part_name_str{};
-		std::array<char, 16> benchmark_name_short_str{};
-		std::array<char, 16> benchmark_score_str{};
+		std::array<char, 32> part_name_str{};
+		std::array<char, 32> benchmark_name_short_str{};
+		std::array<char, 32> benchmark_score_str{};
 		std::mutex input_events_mutex{};
 		std::vector<input_event> input_events{};
 		msg_state_t msg_state{};

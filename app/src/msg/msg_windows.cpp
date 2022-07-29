@@ -1,17 +1,11 @@
 #include "msg.h"
-#include <chrono>
 #include <thread>
-extern "C" {
-	#include <unistd.h>
-	#include <fcntl.h>
-	#include <termio.h>
-	#include <sys/ioctl.h>
-}
+#include <chrono>
 
 namespace ocgadget {
-	struct msg_state_linux : public msg_state_impl {
+	struct msg_state_windows : public msg_state_impl {
 
-		virtual ~msg_state_linux() noexcept = default;
+		virtual ~msg_state_windows() noexcept = default;
 
 		void init(msg_state_t& state) noexcept override {
 		}
@@ -25,6 +19,6 @@ namespace ocgadget {
 	};
 
 	void msg_init_impl(msg_state_t& state) noexcept {
-		state.impl = std::make_unique<msg_state_linux>();
+		state.impl = std::make_unique<msg_state_windows>();
 	}
 } // namespace ocgadget

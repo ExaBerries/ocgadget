@@ -7,6 +7,8 @@ project(
 	]
 )
 
+cc = meson.get_compiler('cpp')
+
 message(host_machine.system())
 
 if host_machine.system() == 'darwin'
@@ -37,6 +39,7 @@ if host_machine.system() == 'darwin'
 		dependency('AVFoundation'),
 		dependency('CoreMedia')
 	]
+elif host_machine.system() == 'windows'
 endif
 
 srcs = [
@@ -64,6 +67,13 @@ elif host_machine.system() == 'linux'
 		'src/capture/capture_linux.cpp',
 		'src/capture/v4l2.cpp',
 		'src/msg/msg_linux.cpp'
+	]
+elif host_machine.system() == 'windows'
+	srcs += [
+		'src/ocgadget_windows.cpp',
+		'src/capture/capture_windows.cpp',
+		'src/capture/mediafoundation.cpp',
+		'src/msg/msg_windows.cpp'
 	]
 endif
 
