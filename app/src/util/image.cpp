@@ -94,7 +94,7 @@ namespace ocgadget {
 		uint32_t i = 0;
 		uint32_t j = 0;
 
-		while (i < width * height * 3u) {
+		while (i < width * height * 4u) {
 			y = yuyv[j];
 			cb = yuyv[j+1];
 			cr = yuyv[j+3];
@@ -129,9 +129,9 @@ namespace ocgadget {
 			if (b < 0) b = 0;
 			else if (b > 255) b = 255;
 
-			rgb[i+3] = (unsigned char)r;
-			rgb[i+4] = (unsigned char)g;
-			rgb[i+5] = (unsigned char)b;
+			rgb[i+4] = (unsigned char)r;
+			rgb[i+5] = (unsigned char)g;
+			rgb[i+6] = (unsigned char)b;
 
 			i+=8;
 			j+=4;
