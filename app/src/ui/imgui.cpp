@@ -81,6 +81,7 @@ namespace ocgadget {
 			}
 
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::Text("Capture average %.3f ms/frame (%.1f FPS)", 1000.0f / capture_state.capture_fps, capture_state.capture_fps);
 			ImGui::End();
 		}
 

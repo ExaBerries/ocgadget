@@ -2,7 +2,6 @@
 #include <iostream>
 #include <algorithm>
 #include <thread>
-#include <chrono>
 
 namespace ocgadget {
 	static void find_capture_devices(capture_state_t& state) noexcept {
@@ -66,6 +65,8 @@ namespace ocgadget {
 		} else {
 			std::this_thread::sleep_for(std::chrono::milliseconds(64));
 		}
+		state.capture_fps = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - state.last_time).count();
+		state.last_time = std::chrono::steady_clock::now();
 	}
 
 	void capture_cleanup(capture_state_t& state) noexcept {

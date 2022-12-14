@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <mutex>
+#include <chrono>
 
 namespace ocgadget {
 	struct capture_api_impl;
@@ -55,6 +56,8 @@ namespace ocgadget {
 		std::mutex capture_config_mutex{};
 		capture_config_t capture_config{};
 		std::unique_ptr<capture_playback> playback{};
+		std::chrono::steady_clock::time_point last_time;
+		double capture_fps = 0.0;
 	};
 
 	using image_buffer_state_t = decltype(std::declval<capture_state_t>().image_buffer_state);

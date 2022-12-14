@@ -12,7 +12,7 @@ meson-private
 meson-uninstalled
 
 # meson subprojects
-app/subprojects/imgui-1.81
+app/subprojects/imgui-1.88
 app/subprojects/packagecache
 app/*.ini
 
